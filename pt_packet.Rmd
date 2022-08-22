@@ -1,0 +1,217 @@
+---
+output: 
+  word_document:
+    reference_docx: "packet_styles.docx"
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(lubridate)
+library(googlesheets4)
+library(RefManageR)
+library(activityReporteR)
+library(flextable)
+
+data_gs_url <- "https://docs.google.com/spreadsheets/d/11XRsF-MupYcnZlykUe6YHAGe1A16CxJyq9nT3oSbDeg/edit#gid=0"
+gs4_auth("haoye@ufl.edu")
+
+data_bib_file <- "refs.bib"
+dept_name <- "Academic Research Consulting & Services"
+
+set_flextable_defaults(
+    font.family = "Times New Roman", 
+    font.size = 11, 
+    border.color = "black", 
+    table.layout = "fixed", 
+    padding.top = 0, padding.bottom = 0
+)
+
+```
+
+```{r check data sources, echo = FALSE}
+data_files <- c("data/effort_perc.RDS")
+data_files_found <- file.exists(here::here(data_files))
+if (!all(data_files_found))
+{
+    missing_files <- paste0("file '", 
+                            data_files[!data_files_found], 
+                            "' not found")
+    vapply(missing_files, warning, "", call. = FALSE)
+}
+```
+
+<!--
+# 1. NOMINEE INFORMATION COVER SHEET 
+
+The cover sheet automatically gets added after the PDF is uploaded into UF's OPT system.
+-->
+
+# 2. BRIEF DESCRIPTION OF JOB DUTIES 
+
+<!-- Briefly describe your assigned duties and responsibilities. Provide context for these responsibilities (ie. the relevance and importance to your discipline and UF -->
+<!-- Describe the duties of your position – this is not really the place for first person input (instead of ‘I do this and I do that’, it should be a description of the duties). Take advantage of this opportunity to ‘translate’ your work for reviewers who are unfamiliar with librarianship. -->
+
+
+
+
+## Impact of COVID pandemic on Job Duties
+<!-- In this optional section faculty may provide a statement regarding the impact of the COVID-19 pandemic on the nominee’s professional life -- up to 500 words. This statement should explain how the nominee adjusted/compensated for pandemic-related difficulties impacting their research, teaching, clinics, extension or service. Please see http://aa.ufl.edu/policies/tenure-and-promotion-information/ for more details. This was a new section beginning in 2021. -->
+
+
+
+
+# 3. AREAS OF SPECIALIZATION
+
+# 4. EFFORT REPORTED SINCE LAST PROMOTION (NOT TO EXCEED TEN YEARS), OR SINCE UF EMPLOYMENT, whichever is more recent 
+
+```{r, echo = FALSE}
+effort_perc <- readRDS("data/effort_perc.RDS")
+
+
+dat_effort <- effort_perc
+m <- NROW(dat_effort)
+n <- NCOL(dat_effort)
+colnames(dat_effort) <- seq(n)
+
+dat_effort %>%
+    flextable() %>%
+    set_table_properties(layout = "autofit") %>%
+    delete_part(part = "header") %>%
+    add_header_row(values = dept_name, colwidths = n) %>%
+    theme_box() %>% 
+    bg(i = 1, bg = "#D9D9D9", part = "header") %>%
+    bg(j = c(1, n), bg = "#F2F2F2") %>%
+    italic(i = 2:m, j = 1) %>%
+    bold(i = 2:m, j = 1) %>%
+    bold(i = 1, j = n) %>%
+    align(align = "right", i = 2:m) %>%
+    align(align = "center", part = "header") %>%
+    fontsize(size = 9) %>%
+    fontsize(size = 10, part = "header")
+
+```
+
+
+
+
+# 5. EDUCATIONAL BACKGROUND
+
+```{r, echo = FALSE, message = FALSE}
+degrees_file <- here::here("data/dat_degrees.RDS")
+if (!file.exists(degrees_file))
+{
+    saveRDS(get_gs_data(data_gs_url, sheet = "degrees"), 
+            degrees_file)
+}
+
+dat_degrees <- readRDS(degrees_file)
+dat_degrees %>%
+    mutate(Year = as.character(year(as.Date(Date)))) %>%
+    select(-Date) %>%
+    arrange(desc(Year)) %>%
+    flextable() %>%
+    set_table_properties(layout = "autofit") %>%
+    theme_box() %>% 
+    align(align = "center", part = "header")
+```
+
+# 6. EMPLOYMENT
+
+```{r, echo = FALSE, message = FALSE}
+jobs_file <- here::here("data/dat_jobs.RDS")
+if (!file.exists(jobs_file))
+{
+    saveRDS(get_gs_data(data_gs_url, sheet = "jobs"), 
+            jobs_file)
+}
+
+format_jobs <- function(df)
+{
+    to_format <- df %>%
+        dplyr::mutate(date = lubridate::parse_date_time(.data$date_start, "my"), 
+                      date_end = tidyr::replace_na(date_end, "present"), 
+                      Dates = glue::glue("{date_start} - {date_end}")) %>%
+        dplyr::arrange(dplyr::desc(.data$date)) %>%
+        dplyr::select(Institution, Position, Dates)
+}
+
+dat_jobs <- readRDS(jobs_file)
+dat_jobs %>%
+    format_jobs() %>%
+    flextable() %>%
+    set_table_properties(layout = "autofit") %>%
+    theme_box() %>% 
+    align(align = "center", part = "header")
+```
+
+
+# 7. YEAR TENURE/PERMANENT STATUS WAS AWARDED BY UNIVERSITY OF FLORIDA
+
+# 8. TENURE AND PROMOTION CRITERIA
+
+# 9. TEACHING, ADVISING, AND INSTRUCTIONAL ACCOMPLISHMENTS
+
+*NOTE: To support the teaching and research missions of the University, Library faculty are assigned to varying degrees to perform public, technical, archival, and administrative functions. These primary activities are referred to in the Libraries' T&P Criteria as "Professional Responsibilities" rather than "Teaching" to better reflect the unique and specialized activities in which Library faculty engage.*
+
+# 10. TEACHING EVALUATIONS
+
+## UF Teaching Evaluations
+
+**Summary Table**
+
+```{r}
+
+```
+
+
+## Peer assessments
+
+
+# 11. EDUCATIONAL PORTFOLIO (if applicable)
+
+# 12. GRADUATE COMMITTEE ACTIVITIES
+
+# 13. CONTRIBUTION TO DISCIPLINE/RESEARCH NARRATIVE
+
+# 14. CREATIVE WORKS OR ACTIVITIES
+
+# 15. PATENTS AND COPYRIGHTS
+
+# 16. PUBLICATIONS
+
+# 17. LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
+
+# 18. SPONSORED PROJECTS
+
+# 19. SERVICE NARRATIVE 
+
+# 20. UNIVERSITY GOVERNANCE AND SERVICE
+
+# 21. CONSULTATIONS OUTSIDE THE UNIVERSITY
+
+# 22. EDITOR OF SCHOLARLY JOURNALS, SERVICE OR EDITORIAL ADVISORY BOARDS, REVIEWER FOR SCHOLARLY JOURNALS
+
+# 23. INTERNATIONAL ACTIVITIES
+
+# 24. EXTENSION PROGRAMS (for IFAS only)
+
+# 25. CLINICAL SERVICE, CLINICAL ACTIVITIES, OR CLINICAL PORTFOLIO
+
+
+# 26. SERVICE TO SCHOOLS
+
+# 27. MEMBERSHIP AND ACTIVITIES IN THE PROFESSION
+
+# 28. HONORS
+
+# 29. CHAIR’S LETTER
+
+# 30. DEAN’S LETTER
+
+# 31. SAMPLE LETTER TO EVALUATORS
+
+# 32. BIO-SKETCHES OF INDIVIDUALS WRITING SOLICITED LETTERS OF EVALUATION and LETTERS OF EVALUATION
+
+# 33. COPIES OF THE LAST FIVE ANNUAL LETTERS OF EVALUATION
+
+# 34. FURTHER INFORMATION
