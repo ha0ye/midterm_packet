@@ -77,3 +77,19 @@ format_teaching_eval <- function(df)
         fontsize(size = 10, i = c(1, 2), part = "header")
 }
 
+format_grad_committee <- function(df)
+{
+    if (NROW(df) == 0)
+    {
+        return(knitr::asis_output("None"))
+    }
+
+    stop("HAO, implement this!")
+}
+
+
+remove_empty_rows <- function(df)
+{
+    df %>%
+        filter(!if_all(everything(), function(x) {x == ""}))
+}

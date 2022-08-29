@@ -32,7 +32,8 @@ set_flextable_defaults(
 ```{r check data sources, echo = FALSE}
 data_files <- c("data/effort_perc.RDS", 
                 "data/teaching_summary.RDS", 
-                "data/teaching_evals.RDS")
+                "data/teaching_evals.RDS", 
+                "data/grad_committees.RDS")
 data_files_found <- file.exists(here::here(data_files))
 if (!all(data_files_found))
 {
@@ -43,13 +44,14 @@ if (!all(data_files_found))
 }
 ```
 
+# NOMINEE INFORMATION COVER SHEET 
+
 <!--
-# 1. NOMINEE INFORMATION COVER SHEET 
 
 The cover sheet automatically gets added after the PDF is uploaded into UF's OPT system.
 -->
 
-# 2. BRIEF DESCRIPTION OF JOB DUTIES 
+# BRIEF DESCRIPTION OF JOB DUTIES 
 
 <!-- Briefly describe your assigned duties and responsibilities. Provide context for these responsibilities (ie. the relevance and importance to your discipline and UF -->
 <!-- Describe the duties of your position – this is not really the place for first person input (instead of ‘I do this and I do that’, it should be a description of the duties). Take advantage of this opportunity to ‘translate’ your work for reviewers who are unfamiliar with librarianship. -->
@@ -63,21 +65,21 @@ The cover sheet automatically gets added after the PDF is uploaded into UF's OPT
 
 
 
-# 3. AREAS OF SPECIALIZATION
+# AREAS OF SPECIALIZATION
 
 
 
 
 
 
-# 4. EFFORT REPORTED SINCE LAST PROMOTION (NOT TO EXCEED TEN YEARS), OR SINCE UF EMPLOYMENT, whichever is more recent 
+# EFFORT REPORTED SINCE LAST PROMOTION (NOT TO EXCEED TEN YEARS), OR SINCE UF EMPLOYMENT, whichever is more recent 
 
 ```{r, echo = FALSE}
 df <- readRDS("data/effort_perc.RDS")
 format_effort_perc(df)
 ```
 
-# 5. EDUCATIONAL BACKGROUND
+# EDUCATIONAL BACKGROUND
 
 ```{r, echo = FALSE, message = FALSE}
 degrees_file <- here::here("data/dat_degrees.RDS")
@@ -98,7 +100,7 @@ dat_degrees %>%
     align(align = "center", part = "header")
 ```
 
-# 6. EMPLOYMENT
+# EMPLOYMENT
 
 ```{r, echo = FALSE, message = FALSE}
 jobs_file <- here::here("data/dat_jobs.RDS")
@@ -128,17 +130,17 @@ dat_jobs %>%
 ```
 
 
-# 7. YEAR TENURE/PERMANENT STATUS WAS AWARDED BY UNIVERSITY OF FLORIDA
+# YEAR TENURE/PERMANENT STATUS WAS AWARDED BY UNIVERSITY OF FLORIDA
 
 N/A
 
-# 8. TENURE AND PROMOTION CRITERIA
+# TENURE AND PROMOTION CRITERIA
 
-# 9. TEACHING, ADVISING, AND INSTRUCTIONAL ACCOMPLISHMENTS
+# TEACHING, ADVISING, AND INSTRUCTIONAL ACCOMPLISHMENTS
 
 *NOTE: To support the teaching and research missions of the University, Library faculty are assigned to varying degrees to perform public, technical, archival, and administrative functions. These primary activities are referred to in the Libraries' T&P Criteria as "Professional Responsibilities" rather than "Teaching" to better reflect the unique and specialized activities in which Library faculty engage.*
 
-# 10. TEACHING EVALUATIONS
+# TEACHING EVALUATIONS
 
 ## UF Teaching Evaluations
 
@@ -164,9 +166,18 @@ format_teaching_eval(df)
 
 None
 
-# 11. EDUCATIONAL PORTFOLIO (if applicable)
+# EDUCATIONAL PORTFOLIO (if applicable)
 
-# 12. GRADUATE COMMITTEE ACTIVITIES
+# GRADUATE COMMITTEE ACTIVITIES
+
+```{r, echo = FALSE}
+df <- readRDS("data/grad_committees.RDS") %>%
+    remove_empty_rows()
+
+format_grad_committee(df)
+```
+
+
 
 # 13. CONTRIBUTION TO DISCIPLINE/RESEARCH NARRATIVE
 

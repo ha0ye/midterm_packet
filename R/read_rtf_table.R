@@ -15,6 +15,9 @@ saveRDS(teaching_summary, "data/teaching_summary.RDS")
 teaching_evals <- docx_extract_tbl(doc, 6, header = FALSE)
 saveRDS(teaching_evals, "data/teaching_evals.RDS")
 
+grad_committees <- docx_extract_tbl(doc, 8)
+saveRDS(grad_committees, "data/grad_committees.RDS")
+
 funding_internal <- docx_extract_tbl(doc, 22)
 saveRDS(funding_internal, "data/funding_internal.RDS")
 
