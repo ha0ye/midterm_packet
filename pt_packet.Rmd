@@ -11,12 +11,23 @@ library(googlesheets4)
 library(RefManageR)
 library(activityReporteR)
 library(flextable)
-source("R/format_word_tables.R")
+
+report_start_date <- as.Date("2020-05-01")
+report_end_date <- Sys.Date()
 
 data_gs_url <- "https://docs.google.com/spreadsheets/d/11XRsF-MupYcnZlykUe6YHAGe1A16CxJyq9nT3oSbDeg/edit#gid=0"
 gs4_auth("haoye@ufl.edu")
 
-data_bib_file <- "refs.bib"
+data_bib_file <- "my_lib.bib"
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           max.names = Inf, 
+           hyperlink = FALSE,
+           dashed = FALSE)
+my_bib <- ReadBib(data_bib_file, check = FALSE)
+
 dept_name <- "Academic Research Consulting & Services"
 
 set_flextable_defaults(
@@ -27,13 +38,18 @@ set_flextable_defaults(
     padding.top = 3, padding.bottom = 1
 )
 
+source("R/format_word_tables.R")
+source("R/download_gs_data.R")
+
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r check data sources, echo = FALSE}
+```{r check data sources}
 data_files <- c("data/effort_perc.RDS", 
                 "data/teaching_summary.RDS", 
                 "data/teaching_evals.RDS", 
-                "data/grad_committees.RDS")
+                "data/grad_committees.RDS", 
+                "data/research.RDS")
 data_files_found <- file.exists(here::here(data_files))
 if (!all(data_files_found))
 {
@@ -74,7 +90,7 @@ The cover sheet automatically gets added after the PDF is uploaded into UF's OPT
 
 # EFFORT REPORTED SINCE LAST PROMOTION (NOT TO EXCEED TEN YEARS), OR SINCE UF EMPLOYMENT, whichever is more recent 
 
-```{r, echo = FALSE}
+```{r}
 df <- readRDS("data/effort_perc.RDS")
 format_effort_perc(df)
 ```
@@ -148,14 +164,14 @@ N/A
 
 <br />
 
-```{r, echo = FALSE}
+```{r}
 df <- readRDS("data/teaching_summary.RDS")
 format_teaching_summary(df)
 ```
 
 <br />
 
-```{r, echo = FALSE}
+```{r}
 df <- readRDS("data/teaching_evals.RDS")
 format_teaching_eval(df)
 ```
@@ -168,24 +184,62 @@ None
 
 # EDUCATIONAL PORTFOLIO (if applicable)
 
+N/A
+
 # GRADUATE COMMITTEE ACTIVITIES
 
-```{r, echo = FALSE}
+```{r}
 df <- readRDS("data/grad_committees.RDS") %>%
     remove_empty_rows()
 
 format_grad_committee(df)
 ```
 
+# CONTRIBUTION TO DISCIPLINE/RESEARCH NARRATIVE
+
+# CREATIVE WORKS OR ACTIVITIES
+
+# PATENTS AND COPYRIGHTS
+
+None
+
+# PUBLICATIONS
+
+## Books, Sole Author
+<!-- (Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+
+## Books, Co-authored
+<!-- (Co-author(s), Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+
+## Books, Edited
+<!-- (Editor, Co-editor(s), Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+
+## Books, Contributor of Chapter(s)
+<!-- (Author, Co-author(s), Title of Book and Chapter, Publisher, Place of Publication, Date, Inclusive Pages) -->
+
+## Monographs
+<!-- (Author, Co-author(s), Title, Series of Volume, if applicable, Publisher, Place of Publication, Date, Inclusive Pages) -->
+
+## Refereed Publications
+<!-- (Author, Co-author(s), Title, Name of Journal or Publication, Volume, Date, Inclusive Pages) -->
+
+```{r, results = "asis"}
+dat_research <- readRDS("data/research.RDS")
+articles <- filter(dat_research, type == "paper")
+
+pubs <- format_research(filter(dat_research, status == "published"), "paper", my_bib)
+
+if (NROW(pubs) > 0)
+{
+    pubs %>%
+        format_author() %>%
+        print_data()
+}
+```
 
 
-# 13. CONTRIBUTION TO DISCIPLINE/RESEARCH NARRATIVE
 
-# 14. CREATIVE WORKS OR ACTIVITIES
 
-# 15. PATENTS AND COPYRIGHTS
-
-# 16. PUBLICATIONS
 
 # 17. LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
 
