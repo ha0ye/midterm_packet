@@ -51,7 +51,9 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r check data sources}
-data_files <- c("data/effort_perc.RDS", 
+data_files <- c("data/degrees.RDS", 
+                "data/jobs.RDS", 
+                "data/effort_perc.RDS", 
                 "data/teaching_summary.RDS", 
                 "data/teaching_evals.RDS", 
                 "data/grad_committees.RDS", 
@@ -109,14 +111,7 @@ format_effort_perc(df)
 # EDUCATIONAL BACKGROUND
 
 ```{r, echo = FALSE, message = FALSE}
-degrees_file <- here::here("data/dat_degrees.RDS")
-if (!file.exists(degrees_file))
-{
-    saveRDS(get_gs_data(data_gs_url, sheet = "degrees"), 
-            degrees_file)
-}
-
-dat_degrees <- readRDS(degrees_file)
+dat_degrees <- readRDS("data/degrees.RDS")
 dat_degrees %>%
     mutate(Year = as.character(year(as.Date(Date)))) %>%
     select(-Date) %>%
@@ -130,24 +125,7 @@ dat_degrees %>%
 # EMPLOYMENT
 
 ```{r, echo = FALSE, message = FALSE}
-jobs_file <- here::here("data/dat_jobs.RDS")
-if (!file.exists(jobs_file))
-{
-    saveRDS(get_gs_data(data_gs_url, sheet = "jobs"), 
-            jobs_file)
-}
-
-format_jobs <- function(df)
-{
-    to_format <- df %>%
-        dplyr::mutate(date = lubridate::parse_date_time(.data$date_start, "my"), 
-                      date_end = tidyr::replace_na(date_end, "present"), 
-                      Dates = glue::glue("{date_start} - {date_end}")) %>%
-        dplyr::arrange(dplyr::desc(.data$date)) %>%
-        dplyr::select(Institution, Position, Dates)
-}
-
-dat_jobs <- readRDS(jobs_file)
+dat_jobs <- readRDS("data/jobs.RDS")
 dat_jobs %>%
     format_jobs() %>%
     flextable() %>%
@@ -237,7 +215,7 @@ I seek to create more equity and inclusion in academic research spaces. allyship
 
 ```{r, results = "asis"}
 dat_research <- readRDS("data/research.RDS")
-works <- filter(dat_research, type %in% c("other", "software", "OER"))
+works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint"))
 
 pubs <- format_research_other(works, my_bib)
 
@@ -279,7 +257,9 @@ None
 ```{r, results = "asis"}
 dat_research <- readRDS("data/research.RDS")
 
-pubs <- format_research(filter(dat_research, status == "published"), "paper", my_bib)
+pubs <- dat_research %>%
+    filter(status %in% c("published", "forthcoming")) %>% 
+    format_research("paper", my_bib)
 
 if (NROW(pubs) > 0)
 {
