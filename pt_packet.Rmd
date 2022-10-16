@@ -57,7 +57,8 @@ data_files <- c("data/degrees.RDS",
                 "data/teaching_summary.RDS", 
                 "data/teaching_evals.RDS", 
                 "data/grad_committees.RDS", 
-                "data/research.RDS")
+                "data/research.RDS",
+                "data/grants.RDS")
 data_files_found <- file.exists(here::here(data_files))
 if (!all(data_files_found))
 {
@@ -228,8 +229,6 @@ if (NROW(pubs) > 0)
 }
 ```
 
-[Underlined text]{.underline}
-
 # PATENTS AND COPYRIGHTS
 
 None
@@ -238,18 +237,23 @@ None
 
 ## Books, Sole Author
 <!-- (Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+None
 
 ## Books, Co-authored
 <!-- (Co-author(s), Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+None
 
 ## Books, Edited
 <!-- (Editor, Co-editor(s), Title, Publisher, Place of Publication, Date, Inclusive Pages) -->
+None
 
 ## Books, Contributor of Chapter(s)
 <!-- (Author, Co-author(s), Title of Book and Chapter, Publisher, Place of Publication, Date, Inclusive Pages) -->
+None
 
 ## Monographs
 <!-- (Author, Co-author(s), Title, Series of Volume, if applicable, Publisher, Place of Publication, Date, Inclusive Pages) -->
+None
 
 ## Refereed Publications
 <!-- (Author, Co-author(s), Title, Name of Journal or Publication, Volume, Date, Inclusive Pages) -->
@@ -270,6 +274,24 @@ if (NROW(pubs) > 0)
 }
 ```
 
+## Non-refereed Publications
+<!-- Author, Co-author(s), Title, Name of Journal, Bulletin, Circular, or other Publication, Volume, Date, Inclusive Pages -->
+None
+
+## Bibliographies/Catalogs
+<!-- Author, Co-author(s), Title, Publisher, Place of Publication, Date, Inclusive Pages -->
+None
+
+## Abstracts
+<!-- Author, Co-author(s), Title, Name of Journal or Publication, Volume, Date, Inclusive Pages -->
+None
+
+## Reviews
+<!-- Author, Co-author(s), Title and Author of Work Reviewed, Where Review was Published, Date, Inclusive Pages -->
+None
+
+## Miscellaneous
+<!-- Author, Co-author(s), Title, Source of Publication, Date, Inclusive Pages -->
 
 
 
@@ -277,6 +299,50 @@ if (NROW(pubs) > 0)
 # 17. LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
 
 # 18. SPONSORED PROJECTS
+
+```{r, include = FALSE}
+start_year <- year(report_start_date)
+end_year <- year(report_end_date)
+```
+
+## Funded
+
+### List of Funded Grants
+
+#### List of Funding - Internal `r start_year` to `r end_year`
+
+```{r, echo = FALSE, message = FALSE, results = "asis"}
+dat_grants <- readRDS("data/grants.RDS")
+
+grants <- dat_grants %>%
+    filter(funder_loc == "internal")
+
+if (NROW(grants) > 0)
+{
+    grants %>%
+        format_grants_table() %>%
+        print_grants_table()
+} else {
+    cat("None")
+}
+```
+
+#### List of Funding - External `r start_year` to `r end_year`
+
+```{r, echo = FALSE}
+dat_grants <- readRDS("data/grants.RDS")
+
+grants <- dat_grants %>%
+    filter(funder_loc == "external")
+
+if (NROW(grants) > 0)
+{
+    grants %>%
+        format_grants_table() %>%
+        print_grants_table()
+}
+```
+
 
 # 19. SERVICE NARRATIVE 
 
@@ -288,25 +354,30 @@ if (NROW(pubs) > 0)
 
 # 23. INTERNATIONAL ACTIVITIES
 
-# 24. EXTENSION PROGRAMS (for IFAS only)
+# EXTENSION PROGRAMS (for IFAS only)
 
-# 25. CLINICAL SERVICE, CLINICAL ACTIVITIES, OR CLINICAL PORTFOLIO
+N/A
 
+# CLINICAL SERVICE, CLINICAL ACTIVITIES, OR CLINICAL PORTFOLIO
 
-# 26. SERVICE TO SCHOOLS
+N/A
+
+# SERVICE TO SCHOOLS
+
+None
 
 # 27. MEMBERSHIP AND ACTIVITIES IN THE PROFESSION
 
 # 28. HONORS
 
-# 29. CHAIR’S LETTER
+# CHAIR’S LETTER
 
-# 30. DEAN’S LETTER
+# DEAN’S LETTER
 
-# 31. SAMPLE LETTER TO EVALUATORS
+# SAMPLE LETTER TO EVALUATORS
 
-# 32. BIO-SKETCHES OF INDIVIDUALS WRITING SOLICITED LETTERS OF EVALUATION and LETTERS OF EVALUATION
+# BIO-SKETCHES OF INDIVIDUALS WRITING SOLICITED LETTERS OF EVALUATION and LETTERS OF EVALUATION
 
-# 33. COPIES OF THE LAST FIVE ANNUAL LETTERS OF EVALUATION
+# COPIES OF THE LAST FIVE ANNUAL LETTERS OF EVALUATION
 
 # 34. FURTHER INFORMATION

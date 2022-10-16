@@ -96,10 +96,33 @@ remove_empty_rows <- function(df)
 
 format_jobs <- function(df)
 {
-    to_format <- df %>%
+    df %>%
         dplyr::mutate(date = lubridate::parse_date_time(.data$date_start, "my"),
                       date_end = tidyr::replace_na(date_end, "present"),
                       Dates = glue::glue("{date_start} - {date_end}")) %>%
         dplyr::arrange(dplyr::desc(.data$date)) %>%
         dplyr::select(Institution, Position, Dates)
+}
+
+format_grants_table <- function(df)
+{
+    df %>%
+        dplyr::mutate(Role = glue::glue("{role} ({percentage}%)"),
+                      `Reporting Agency` = funder,
+                      `Grant Title` = title,
+                      Dates = glue::glue('{strftime(date_start, format = "%m/%y")} - {strftime(date_end, format = "%m/%y")} '),
+                      `Awarded/Anticipated` = total_award,
+                      `Candidate Allocation` = allocation) %>%
+        dplyr::select(Role, `Reporting Agency`,
+                      `Grant Title`, Dates,
+                      `Awarded/Anticipated`, `Candidate Allocation`)
+}
+
+print_grants_table <- function(df)
+{
+    df %>%
+        flextable() %>%
+        set_table_properties(layout = "autofit") %>%
+        theme_box() %>%
+        align(align = "center", j = c(1, 2, 3, 5, 6), part = "all")
 }
