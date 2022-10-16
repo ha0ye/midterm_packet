@@ -47,7 +47,7 @@ underline_first_author <- function(df)
     format_author(df, c("^(\\w+, \\w+\\.)" = "\\[\\1\\]\\{\\.underline\\}"))
 }
 
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, results = "asis")
 ```
 
 ```{r check data sources}
@@ -58,7 +58,10 @@ data_files <- c("data/degrees.RDS",
                 "data/teaching_evals.RDS", 
                 "data/grad_committees.RDS", 
                 "data/research.RDS",
-                "data/grants.RDS")
+                "data/grants.RDS", 
+                "data/service.RDS", 
+                "data/reviews.RDS", 
+                "data/awards.RDS")
 data_files_found <- file.exists(here::here(data_files))
 if (!all(data_files_found))
 {
@@ -111,7 +114,7 @@ format_effort_perc(df)
 
 # EDUCATIONAL BACKGROUND
 
-```{r, echo = FALSE, message = FALSE}
+```{r, message = FALSE}
 dat_degrees <- readRDS("data/degrees.RDS")
 dat_degrees %>%
     mutate(Year = as.character(year(as.Date(Date)))) %>%
@@ -125,7 +128,7 @@ dat_degrees %>%
 
 # EMPLOYMENT
 
-```{r, echo = FALSE, message = FALSE}
+```{r, message = FALSE}
 dat_jobs <- readRDS("data/jobs.RDS")
 dat_jobs %>%
     format_jobs() %>%
@@ -146,6 +149,11 @@ N/A
 
 *NOTE: To support the teaching and research missions of the University, Library faculty are assigned to varying degrees to perform public, technical, archival, and administrative functions. These primary activities are referred to in the Libraries' T&P Criteria as "Professional Responsibilities" rather than "Teaching" to better reflect the unique and specialized activities in which Library faculty engage.*
 
+
+
+
+
+
 # TEACHING EVALUATIONS
 
 ## UF Teaching Evaluations
@@ -165,8 +173,6 @@ format_teaching_summary(df)
 df <- readRDS("data/teaching_evals.RDS")
 format_teaching_eval(df)
 ```
-
-
 
 ## Peer assessments
 
@@ -218,15 +224,12 @@ I seek to create more equity and inclusion in academic research spaces. allyship
 dat_research <- readRDS("data/research.RDS")
 works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint"))
 
-pubs <- format_research_other(works, my_bib)
-
-if (NROW(pubs) > 0)
-{
-    pubs %>%
-        underline_first_author() %>%
-        format_author() %>%
-        print_data(sep = "\n\n<br />\n\n")
-}
+works %>% 
+    format_research_other(my_bib) %>%
+    underline_first_author() %>%
+    format_author() %>%
+    print_data(prefix = "", sep = "\n\n<br />\n\n", 
+               empty_message = "None\n")
 ```
 
 # PATENTS AND COPYRIGHTS
@@ -260,18 +263,14 @@ None
 
 ```{r, results = "asis"}
 dat_research <- readRDS("data/research.RDS")
+pubs <- filter(dat_research, status %in% c("published", "forthcoming"))
 
-pubs <- dat_research %>%
-    filter(status %in% c("published", "forthcoming")) %>% 
-    format_research("paper", my_bib)
-
-if (NROW(pubs) > 0)
-{
-    pubs %>%
-        underline_first_author() %>%
-        format_author() %>%
-        print_data(sep = "\n\n<br />\n\n")
-}
+pubs %>%
+    format_research("paper", my_bib) %>%
+    underline_first_author() %>%
+    format_author() %>%
+    print_data(prefix = "", sep = "\n\n<br />\n\n", 
+               empty_message = "None\n")
 ```
 
 ## Non-refereed Publications
@@ -298,6 +297,16 @@ None
 
 # 17. LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
 
+
+
+
+
+
+
+
+
+
+
 # 18. SPONSORED PROJECTS
 
 ```{r, include = FALSE}
@@ -309,13 +318,14 @@ end_year <- year(report_end_date)
 
 ### List of Funded Grants
 
+```{r, include = FALSE}
+dat_grants <- readRDS("data/grants.RDS")
+```
+
 #### List of Funding - Internal `r start_year` to `r end_year`
 
-```{r, echo = FALSE, message = FALSE, results = "asis"}
-dat_grants <- readRDS("data/grants.RDS")
-
-grants <- dat_grants %>%
-    filter(funder_loc == "internal")
+```{r, message = FALSE, results = "asis"}
+grants <- filter(dat_grants, funder_loc == "internal")
 
 if (NROW(grants) > 0)
 {
@@ -329,11 +339,8 @@ if (NROW(grants) > 0)
 
 #### List of Funding - External `r start_year` to `r end_year`
 
-```{r, echo = FALSE}
-dat_grants <- readRDS("data/grants.RDS")
-
-grants <- dat_grants %>%
-    filter(funder_loc == "external")
+```{r, message = FALSE, results = "asis"}
+grants <-  filter(dat_grants, funder_loc == "external")
 
 if (NROW(grants) > 0)
 {
@@ -343,16 +350,104 @@ if (NROW(grants) > 0)
 }
 ```
 
-
 # 19. SERVICE NARRATIVE 
 
-# 20. UNIVERSITY GOVERNANCE AND SERVICE
+```{r, include = FALSE}
+dat_service <- readRDS("data/service.RDS")
+```
 
-# 21. CONSULTATIONS OUTSIDE THE UNIVERSITY
 
-# 22. EDITOR OF SCHOLARLY JOURNALS, SERVICE OR EDITORIAL ADVISORY BOARDS, REVIEWER FOR SCHOLARLY JOURNALS
+# UNIVERSITY GOVERNANCE AND SERVICE
+
+```{r, include = FALSE, message = FALSE}
+uni_service <- filter(dat_service, setting %in% c("university", "library"))
+dat_service <- anti_join(dat_service, uni_service)
+```
+
+## University
+
+```{r}
+uni_service %>% 
+    filter(sublocale == "university") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n")
+```
+
+## College
+
+```{r}
+uni_service %>% 
+    filter(sublocale == "college") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n")
+```
+
+## Department/Center
+
+```{r}
+uni_service %>% 
+    filter(sublocale == "department") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n")
+```
+
+# CONSULTATIONS OUTSIDE THE UNIVERSITY
+
+None
+
+# EDITOR OF SCHOLARLY JOURNALS, SERVICE OR EDITORIAL ADVISORY BOARDS, REVIEWER FOR SCHOLARLY JOURNALS
+
+## Editor
+
+```{r, message = FALSE}
+dat_editor <- filter(dat_service, stringr::str_detect(dat_service$role, "editor"))
+dat_service <- anti_join(dat_service, dat_editor)
+
+dat_editor %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n")
+```
+
+## Editorial Advisory Boards
+
+None
+
+## Reviewer for Scholarly Journal
+
+```{r}
+format_reviews <- function(df)
+{
+    df %>%
+        mutate(year = year(parse_date_time(date, "my"))) %>%
+        group_by(journal) %>%
+        summarize(n = n(), 
+                  date = max(year), 
+                  yearspan = ifelse(min(year) == max(year), 
+                                    min(year), 
+                                    paste0(min(year), "-", max(year)))) %>%
+        mutate(num_reviews = ifelse(n == 1, 
+                                    "1 review", 
+                                    paste0(n, " reviews")), 
+               to_print = glue::glue("*{journal}*, reviewer, {yearspan}, {num_reviews} conducted."))
+}
+
+dat_reviews <- readRDS("data/reviews.RDS")
+dat_reviews %>%
+    format_reviews() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+    
+```
+
+## Book Manuscripts Reviewed
+
+None
 
 # 23. INTERNATIONAL ACTIVITIES
+
+
+
+
 
 # EXTENSION PROGRAMS (for IFAS only)
 
@@ -366,9 +461,182 @@ N/A
 
 None
 
-# 27. MEMBERSHIP AND ACTIVITIES IN THE PROFESSION
+# MEMBERSHIP AND ACTIVITIES IN THE PROFESSION
+
+## MEMBERSHIPS
+
+```{r, include = FALSE, message = FALSE}
+memberships <- filter(dat_service, activity == "n")
+```
+
+### International
+
+```{r}
+memberships %>%
+    filter(locale == "international") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### National
+
+```{r}
+memberships %>%
+    filter(locale == "national") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### Regional
+
+```{r}
+memberships %>%
+    filter(locale == "regional") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### State
+
+```{r}
+memberships %>%
+    filter(locale == "state") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### Local
+
+```{r}
+memberships %>%
+    filter(locale == "local") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+## ACTIVITIES IN THE PROFESSION
+
+```{r, include = FALSE, message = FALSE}
+activities <- filter(dat_service, activity == "y")
+```
+
+### International
+
+```{r}
+activities %>%
+    filter(locale == "international") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### National
+
+```{r}
+activities %>%
+    filter(locale == "national") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### Regional
+
+```{r}
+activities %>%
+    filter(locale == "regional") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### State
+
+```{r}
+activities %>%
+    filter(locale == "state") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+### Local
+
+```{r}
+activities %>%
+    filter(locale == "local") %>%
+    format_service() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None\n")
+```
 
 # 28. HONORS
+
+```{r, include = FALSE}
+awards <- readRDS("data/awards.RDS")
+
+format_awards <- function(df)
+{
+    df %>%
+        mutate(to_print = glue::glue("{award}, {organization}, {date}")) %>%
+        select(date, to_print)
+}
+```
+
+## International
+
+```{r}
+awards %>%
+    filter(locale == "international") %>%
+    format_awards() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None")
+```
+
+## National
+
+```{r}
+awards %>%
+    filter(locale == "national") %>%
+    format_awards() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None")
+```
+
+## Regional
+
+```{r}
+awards %>%
+    filter(locale == "regional") %>%
+    format_awards() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None")
+```
+
+## State
+
+```{r}
+awards %>%
+    filter(locale == "state") %>%
+    format_awards() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None")
+```
+
+## Local
+
+```{r}
+awards %>%
+    filter(locale == "local") %>%
+    format_awards() %>%
+    print_data(prefix = "", sep = "\n\n", 
+               empty_message = "None")
+```
 
 # CHAIR’S LETTER
 

@@ -10,6 +10,18 @@ out_of_date <- function(filename, max_age = lubridate::make_difftime(day = 1))
     age > max_age
 }
 
+if (out_of_date("data/degrees.RDS"))
+{
+    dat_degrees <- get_gs_data(data_gs_url, sheet = "degrees")
+    saveRDS(dat_degrees, "data/degrees.RDS")
+}
+
+if (out_of_date("data/jobs.RDS"))
+{
+    dat_jobs <- get_gs_data(data_gs_url, sheet = "jobs")
+    saveRDS(dat_jobs, "data/jobs.RDS")
+}
+
 if (out_of_date("data/research.RDS"))
 {
     dat_research <- get_gs_data(data_gs_url, sheet = "research",
@@ -26,14 +38,24 @@ if (out_of_date("data/grants.RDS"))
     saveRDS(dat_grants, "data/grants.RDS")
 }
 
-if (out_of_date("data/degrees.RDS"))
+if (out_of_date("data/service.RDS"))
 {
-    dat_degrees <- get_gs_data(data_gs_url, sheet = "degrees")
-    saveRDS(dat_degrees, "data/degrees.RDS")
+    dat_service <- get_service_data(data_gs_url,
+                                   report_start_date, report_end_date)
+    saveRDS(dat_service, "data/service.RDS")
 }
 
-if (out_of_date("data/jobs.RDS"))
+if (out_of_date("data/reviews.RDS"))
 {
-    dat_jobs <- get_gs_data(data_gs_url, sheet = "jobs")
-    saveRDS(dat_jobs, "data/jobs.RDS")
+    dat_reviews <- read_sheet(data_gs_url, sheet = "reviews", col_types = "c") %>%
+        filter(parse_date_time(date, "my") >= report_start_date &
+                   parse_date_time(date, "my") <= report_end_date)
+    saveRDS(dat_reviews, "data/reviews.RDS")
+}
+
+if (out_of_date("data/awards.RDS"))
+{
+    dat_awards <- get_gs_data(data_gs_url, sheet = "awards",
+                              report_start_date, report_end_date)
+    saveRDS(dat_awards, "data/awards.RDS")
 }
