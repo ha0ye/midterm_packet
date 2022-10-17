@@ -39,8 +39,10 @@ set_flextable_defaults(
     padding.top = 3, padding.bottom = 1
 )
 
-source("R/format_word_tables.R")
 source("R/download_gs_data.R")
+source("R/format_data.R")
+source("R/format_word_tables.R")
+source("R/print_data.R")
 
 underline_first_author <- function(df)
 {
@@ -61,7 +63,8 @@ data_files <- c("data/degrees.RDS",
                 "data/grants.RDS", 
                 "data/service.RDS", 
                 "data/reviews.RDS", 
-                "data/awards.RDS")
+                "data/awards.RDS", 
+                "data/talks.RDS")
 data_files_found <- file.exists(here::here(data_files))
 if (!all(data_files_found))
 {
@@ -295,19 +298,44 @@ None
 
 
 
-# 17. LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
+# LECTURES, SPEECHES, POSTERS PRESENTED AT PROFESSIONAL CONFERENCES/SEMINARS
 
+```{r}
+dat_talks <- readRDS("data/talks.RDS") %>%
+    filter(type == "talk")
+```
 
+## International
 
+```{r}
+print_talks(dat_talks, locale = "international")
+```
 
+## National
 
+```{r}
+print_talks(dat_talks, locale = "national")
+```
 
+## Regional
 
+```{r}
+print_talks(dat_talks, locale = "regional")
+```
 
+## State
 
+```{r}
+print_talks(dat_talks, locale = "state")
+```
 
+## Local
 
-# 18. SPONSORED PROJECTS
+```{r}
+print_talks(dat_talks, locale = "local")
+```
+
+# SPONSORED PROJECTS
 
 ```{r, include = FALSE}
 start_year <- year(report_start_date)
@@ -350,16 +378,51 @@ if (NROW(grants) > 0)
 }
 ```
 
+### Summary of Grant Funding
+
+```{r}
+dat <- data.frame(ROLE = c("Principal Investigator", "Co-Principal Investigator", "Investigator", "Senior Personnel", "Sponsor of Junior Faculty", "Totals"), 
+                  TOTAL = c(99833, 0, 8697, 0, 0, 108530), 
+                  `Direct Costs` = c(75289, 0, 6675, 0, 0, 81964), 
+                  `Indirect Costs` = c(24544, 0, 2022, 0, 0, 26566))
+
+dat %>%
+    flextable() %>%
+    set_table_properties(layout = "autofit") %>%
+    theme_box() %>%
+    align(align = "center", part = "header") %>%
+    align(align = "center", i = 6, j = 1)
+
+```
+
+### Short Narrative of Grant Funding
+
+**Planning for Open Grants: Fostering a Transparent and Accessible National Research Proposal Infrastructure** (ongoing)
+
+The funds for this grant supported work on a planning project to explore the social and technical issues around an open repository, including hiring two graduate student research fellows, stipends for an external advisory board, and conference travel. As the PI, I lead the project team, coordinate the activities, and supervise the student hires.
+
+**Supplement: GatorSTAR: A New MARC** (ongoing)
+
+The funds for this grant supported salaries and the creation and implementation of training modules to educate students on how to share data following the FAIR (Findable Accessible Interoperable Reusable) guidelines. As an investigator for this project, I helped with creating the materials and assisting with the evaluation of the lesson effetiveness.
+
+**Educating for Reproducibility: Pathways to Integrity**
+
+The funds for this grant supported salaries and the hosting of a virtual conference on education in reproducibility across different research disciplines and career stages. As an investigator for this project, I helped with planning of the conference, and execution during the event itself, including moderating and hosting sessions.
+
 # 19. SERVICE NARRATIVE 
 
-```{r, include = FALSE}
-dat_service <- readRDS("data/service.RDS")
-```
+
+
+
+
+
 
 
 # UNIVERSITY GOVERNANCE AND SERVICE
 
 ```{r, include = FALSE, message = FALSE}
+dat_service <- readRDS("data/service.RDS")
+
 uni_service <- filter(dat_service, setting %in% c("university", "library"))
 dat_service <- anti_join(dat_service, uni_service)
 ```
@@ -367,29 +430,22 @@ dat_service <- anti_join(dat_service, uni_service)
 ## University
 
 ```{r}
-uni_service %>% 
-    filter(sublocale == "university") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n")
+print_service(uni_service, sublocale = "university")
 ```
 
 ## College
 
 ```{r}
-uni_service %>% 
-    filter(sublocale == "college") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n")
+print_service(uni_service, sublocale = "college")
 ```
+
 
 ## Department/Center
 
 ```{r}
-uni_service %>% 
-    filter(sublocale == "department") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n")
+print_service(uni_service, sublocale = "department")
 ```
+
 
 # CONSULTATIONS OUTSIDE THE UNIVERSITY
 
@@ -405,7 +461,7 @@ dat_service <- anti_join(dat_service, dat_editor)
 
 dat_editor %>%
     format_service() %>%
-    print_data(prefix = "", sep = "\n\n")
+    print_data(prefix = "* ", sep = "\n\n")
 ```
 
 ## Editorial Advisory Boards
@@ -415,26 +471,11 @@ None
 ## Reviewer for Scholarly Journal
 
 ```{r}
-format_reviews <- function(df)
-{
-    df %>%
-        mutate(year = year(parse_date_time(date, "my"))) %>%
-        group_by(journal) %>%
-        summarize(n = n(), 
-                  date = max(year), 
-                  yearspan = ifelse(min(year) == max(year), 
-                                    min(year), 
-                                    paste0(min(year), "-", max(year)))) %>%
-        mutate(num_reviews = ifelse(n == 1, 
-                                    "1 review", 
-                                    paste0(n, " reviews")), 
-               to_print = glue::glue("*{journal}*, reviewer, {yearspan}, {num_reviews} conducted."))
-}
-
 dat_reviews <- readRDS("data/reviews.RDS")
+
 dat_reviews %>%
     format_reviews() %>%
-    print_data(prefix = "", sep = "\n\n", 
+    print_data(prefix = "* ", sep = "\n\n", 
                empty_message = "None\n")
     
 ```
@@ -445,9 +486,7 @@ None
 
 # 23. INTERNATIONAL ACTIVITIES
 
-
-
-
+Reproducibility is a multi-faceted issue that presents a multitude of challenges and possible solutions. In engaging with international collaborators, stakeholders, and audiences, I am able to both share with and learn from a diverse set of backgrounds and experiences that enhance the impact of my work. This is particularly relevant when interacting with reproducibility and open science groups outside the US and thinking about what kinds of multi-institutional or multi-sector partnerships can shift research practices in the US, Florida, the University, and more local settings. Conversely, my service to international communities and professional organizations helps me to stay on the forefront of advances and practices in the areas of research reproducibility and open research.
 
 # EXTENSION PROGRAMS (for IFAS only)
 
@@ -472,51 +511,31 @@ memberships <- filter(dat_service, activity == "n")
 ### International
 
 ```{r}
-memberships %>%
-    filter(locale == "international") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None\n")
+print_memberships(memberships, locale = "international")
 ```
 
 ### National
 
 ```{r}
-memberships %>%
-    filter(locale == "national") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None\n")
+print_memberships(memberships, locale = "national")
 ```
 
 ### Regional
 
 ```{r}
-memberships %>%
-    filter(locale == "regional") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None\n")
+print_memberships(memberships, locale = "regional")
 ```
 
 ### State
 
 ```{r}
-memberships %>%
-    filter(locale == "state") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None\n")
+print_memberships(memberships, locale = "state")
 ```
 
 ### Local
 
 ```{r}
-memberships %>%
-    filter(locale == "local") %>%
-    format_service() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None\n")
+print_memberships(memberships, locale = "local")
 ```
 
 ## ACTIVITIES IN THE PROFESSION
@@ -575,67 +594,40 @@ activities %>%
                empty_message = "None\n")
 ```
 
-# 28. HONORS
+# HONORS
 
 ```{r, include = FALSE}
 awards <- readRDS("data/awards.RDS")
-
-format_awards <- function(df)
-{
-    df %>%
-        mutate(to_print = glue::glue("{award}, {organization}, {date}")) %>%
-        select(date, to_print)
-}
 ```
 
 ## International
 
 ```{r}
-awards %>%
-    filter(locale == "international") %>%
-    format_awards() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None")
+print_awards(awards, locale = "international")
 ```
 
 ## National
 
 ```{r}
-awards %>%
-    filter(locale == "national") %>%
-    format_awards() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None")
+print_awards(awards, locale = "national")
 ```
 
 ## Regional
 
 ```{r}
-awards %>%
-    filter(locale == "regional") %>%
-    format_awards() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None")
+print_awards(awards, locale = "regional")
 ```
 
 ## State
 
 ```{r}
-awards %>%
-    filter(locale == "state") %>%
-    format_awards() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None")
+print_awards(awards, locale = "state")
 ```
 
 ## Local
 
 ```{r}
-awards %>%
-    filter(locale == "local") %>%
-    format_awards() %>%
-    print_data(prefix = "", sep = "\n\n", 
-               empty_message = "None")
+print_awards(awards, locale = "local")
 ```
 
 # CHAIR’S LETTER

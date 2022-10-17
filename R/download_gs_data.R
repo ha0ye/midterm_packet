@@ -59,3 +59,11 @@ if (out_of_date("data/awards.RDS"))
                               report_start_date, report_end_date)
     saveRDS(dat_awards, "data/awards.RDS")
 }
+
+if (out_of_date("data/talks.RDS"))
+{
+    dat_talks <- get_gs_data(data_gs_url, sheet = "talks",
+                              report_start_date, report_end_date)
+    saveRDS(dat_talks, "data/talks.RDS")
+}
+
