@@ -22,6 +22,13 @@ if (out_of_date("data/jobs.RDS"))
     saveRDS(dat_jobs, "data/jobs.RDS")
 }
 
+if (out_of_date("data/teaching.RDS"))
+{
+    dat_teaching <- get_gs_data(data_gs_url, sheet = "teaching",
+                                report_start_date, report_end_date)
+    saveRDS(dat_teaching, "data/teaching.RDS")
+}
+
 if (out_of_date("data/research.RDS"))
 {
     dat_research <- get_gs_data(data_gs_url, sheet = "research",

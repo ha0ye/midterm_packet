@@ -58,7 +58,8 @@ data_files <- c("data/degrees.RDS",
                 "data/effort_perc.RDS", 
                 "data/teaching_summary.RDS", 
                 "data/teaching_evals.RDS", 
-                "data/grad_committees.RDS", 
+                "data/grad_committees.RDS",
+                "data/teaching.RDS", 
                 "data/research.RDS",
                 "data/grants.RDS", 
                 "data/service.RDS", 
@@ -176,6 +177,64 @@ format_teaching_summary(df)
 df <- readRDS("data/teaching_evals.RDS")
 format_teaching_eval(df)
 ```
+
+**Additional Classes**
+
+```{r, include = FALSE}
+dat_teaching <- readRDS("data/teaching.RDS")
+```
+
+{{explanation}}
+
+### Course-Integrated Instruction
+
+```{r}
+dat_teaching %>%
+    filter(type == "course-integrated") %>%
+    dplyr::mutate(other_instructor = ifelse(is.na(.data$other_instructor), "", 
+                                            glue::glue("co-instructor with {other_instructor}, ")),
+                  print_header = glue::glue('**{course_id}: {title}** - *{session}*, {date}, {other_instructor}'),
+                  print_instructor = glue::glue("  \nCourse Instructor: {instructor}"),
+                  to_print = glue::glue("{print_header}  \n{print_instructor}\n", .trim = FALSE)) %>%
+    dplyr::select(.data$date, .data$to_print) %>%
+    print_data()
+```
+
+### Stand-Alone Library Workshops
+
+```{r}
+dat_teaching %>%
+    filter(type == "standalone") %>%
+    group_by(title) %>%
+    summarize(n = n(), 
+              date = min(date)) %>%
+    mutate(session_line = glue::glue("{n} {ifelse(n > 1, 'sessions', 'session')}"), 
+           to_print = glue::glue('*{title}*, {session_line} since {year(date)}')) %>%
+    print_data()
+```
+
+### Other Instruction, UF
+
+```{r}
+dat_teaching %>%
+    filter(type == "other", 
+           is.na(outreach) | outreach == "n") %>%
+    mutate(title = ifelse(is.na(session), title, glue::glue("{title}: {session}")), 
+           to_print = glue::glue('*{title}*, {event_info}, {date}')) %>%
+    print_data()
+```
+
+### Other Instruction, Outreach
+
+```{r}
+dat_teaching %>%
+    filter(type == "other", outreach == "y") %>%
+    mutate(title = ifelse(is.na(session), title, glue::glue("{title}: {session}")), 
+           to_print = glue::glue('*{title}*, {event_info}, {date}')) %>%
+    print_data()
+```
+
+
 
 ## Peer assessments
 
@@ -439,13 +498,11 @@ print_service(uni_service, sublocale = "university")
 print_service(uni_service, sublocale = "college")
 ```
 
-
 ## Department/Center
 
 ```{r}
 print_service(uni_service, sublocale = "department")
 ```
-
 
 # CONSULTATIONS OUTSIDE THE UNIVERSITY
 
