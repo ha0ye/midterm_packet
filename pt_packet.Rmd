@@ -13,7 +13,7 @@ library(activityReporteR)
 library(flextable)
 
 report_start_date <- as.Date("2020-05-01")
-report_end_date <- Sys.Date()
+report_end_date <- as.Date("2100-01-01")
 
 data_gs_url <- "https://docs.google.com/spreadsheets/d/11XRsF-MupYcnZlykUe6YHAGe1A16CxJyq9nT3oSbDeg/edit#gid=0"
 gs4_auth("haoye@ufl.edu")
@@ -21,7 +21,7 @@ gs4_auth("haoye@ufl.edu")
 data_bib_file <- "my_lib.bib"
 BibOptions(check.entries = FALSE,
            bib.style = "authoryear",
-           cite.style = "alphabetic",
+           cite.style = "apa",
            style = "markdown",
            max.names = Inf, 
            hyperlink = FALSE,
@@ -47,6 +47,11 @@ source("R/print_data.R")
 underline_first_author <- function(df)
 {
     format_author(df, c("^(\\w+, \\w+\\.)" = "\\[\\1\\]\\{\\.underline\\}"))
+}
+
+remove_IN <- function(df)
+{
+    format_author(df, c("In: " = ""))
 }
 
 knitr::opts_chunk$set(echo = FALSE, results = "asis")
@@ -76,6 +81,8 @@ if (!all(data_files_found))
 }
 ```
 
+**In all of your packet, try to avoid phrases like “helped with” or “assisted with” if it can be described in a stronger way. For example, instead of saying helped with planner, say you were a co-planner. Everything should sound like you are a faculty member doing professional level work.**
+
 # NOMINEE INFORMATION COVER SHEET 
 
 <!--
@@ -88,24 +95,29 @@ The cover sheet automatically gets added after the PDF is uploaded into UF's OPT
 <!-- Briefly describe your assigned duties and responsibilities. Provide context for these responsibilities (ie. the relevance and importance to your discipline and UF -->
 <!-- Describe the duties of your position – this is not really the place for first person input (instead of ‘I do this and I do that’, it should be a description of the duties). Take advantage of this opportunity to ‘translate’ your work for reviewers who are unfamiliar with librarianship. -->
 
-As the reproducibility librarian, I am responsible for developing and executing on an institutional strategy for education and support of trans-disciplinary research reproducibility and open science, including programming for and support of information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g. open access, publishing data and code, preprints). I also serve as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences. My position provides interdisciplinary information consultation services in a variety of modes, designs workshops to promote research reproducibility, performs course-integrated instruction, and participates in the Health Science Center Library’s teaching initiatives. In addition, I support special projects and programs related to the overall mission of the Academic Research Consulting & Services department, including coordinating and promoting programs and services, such as the Student HiPerGator Sponsorship program. I also serve on and lead committees within UF, and for national and international professional organizations, when such responsibilities complement or directly relate to promoting research reproducibility. My scholarship explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives. 
+<!-- MRT: I split the first sentence into 2 because it was pretty long, and most people won’t be familiar with what you do so important to make it easy for them. I’d be real obvious about how ARCS serves the whole campus, and that ARCS is Smathers Libraries -->
+
+As the reproducibility librarian, I am responsible for developing and executing on an institutional strategy for education and support of trans-disciplinary research reproducibility and open science for the University of Florida community. These responsibilities include programming for and support of information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g. open access, publishing data and code, preprints). I also serve as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences. My position provides interdisciplinary information consultation services in a variety of modes, designs workshops to promote research reproducibility, performs course-integrated instruction, and participates in the Smathers Libraries' teaching initiatives. In addition, I support special projects and programs related to the overall mission of the Academic Research Consulting & Services department, including coordinating and promoting programs and services, such as the Student HiPerGator Sponsorship program. I serve on and lead committees within UF, and for national and international professional organizations, when such responsibilities complement or directly relate to promoting research reproducibility. My scholarship explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives. 
 
 
 ## Impact of COVID pandemic on Job Duties
 <!-- In this optional section faculty may provide a statement regarding the impact of the COVID-19 pandemic on the nominee’s professional life -- up to 500 words. This statement should explain how the nominee adjusted/compensated for pandemic-related difficulties impacting their research, teaching, clinics, extension or service. Please see http://aa.ufl.edu/policies/tenure-and-promotion-information/ for more details. This was a new section beginning in 2021. -->
 
-The COVID pandemic had a substantial and indeterminate effect on my professional responsibilities. In between my hire and my start in May 2020, the university closed, without a specific plan for re-opening. On top of the challenges of starting a new position, there were many obstacles resulting from operating in unprecedented circumstances. The overall environment and its uncertainties increased the difficult of planning events and connecting with both my liaison departments and broader units on campus.
+<!-- MRT: I’d probably add something here about how long the libraries were closed to in-person. -->
+
+
+The COVID pandemic had a substantial and indeterminate effect on my professional responsibilities. In between my hire and my start in May 2020, the university closed, without a specific plan for re-opening. On top of the challenges of starting a new position, there were many obstacles resulting from operating in unprecedented circumstances. The overall environment and its uncertainties increased the difficulty of planning events, performing in-person outreach, and connecting with both my liaison departments and broader units on campus.
 
 I made use of my existing experience in lesson development and delivering training online to offer workshops online through the Zoom platform. This had the dual advantage of establishing a permanently online record of my lesson content, as well as expanding the accessibility of my instruction to anyone, instead of restricting it to whoever is able to attend in-person.
 
 
 # AREAS OF SPECIALIZATION
 
-* **Liaison librarianship**: supporting students, staff, and faculty in the health sciences through various activities including: expert literature searching, teaching best practices in information searching and retrieval, developing relevant and appropriate library resources and collections, 
-
 * **Reproducibility**: promoting research practices that support "reproducibility" (the ability to generate identical or equivalent results to that of an existing publication using the same dataset and analysis procedures), encompassing data management, sharing intermediate products such as data and code, and honest reporting of statistical analyses.
 
 * **Open research**: A philosophy of radical openness and transparency to as many facets of research as possible, recognizing that many research problems are complex and benefit from teams of researchers working collectively and sharing information (e.g. open science commitments for COVID-19 research)
+
+* **Liaison librarianship**: supporting students, staff, and faculty in the health sciences through various activities including: expert literature searching, teaching best practices in information searching and retrieval, developing relevant and appropriate library resources and collections, 
 
 * **Diversity, equity, and inclusion**: cultivating environments and systems that are intentionally welcoming of individuals from all backgrounds, including historically and presently oppressed group identities, such as race, nationality, gender, sexuality, disability status, etc. 
 
@@ -113,6 +125,15 @@ I made use of my existing experience in lesson development and delivering traini
 
 ```{r}
 df <- readRDS("data/effort_perc.RDS")
+
+# start table at `first_term`
+first_term <- "Spring 2020"
+last_row <- which(df[,1] == first_term)
+if (length(last_row) == 1)
+{
+    df <- df[seq(from = 1, to = last_row), ]
+}
+
 format_effort_perc(df)
 ```
 
@@ -167,7 +188,8 @@ N/A
 <br />
 
 ```{r}
-df <- readRDS("data/teaching_summary.RDS")
+df <- readRDS("data/teaching_summary.RDS") %>%
+    remove_empty_rows()
 format_teaching_summary(df)
 ```
 
@@ -282,9 +304,12 @@ I seek to create more equity and inclusion in academic research spaces. allyship
 
 # CREATIVE WORKS OR ACTIVITIES
 
+<!-- MRT: If you have LibGuides they would go here and would include date of creation, date of update, and number of uses. For your creative works below, would be helpful to have dates and usage if that is possible. -->
+
+
 ```{r, results = "asis"}
 dat_research <- readRDS("data/research.RDS")
-works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint"))
+works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint", "podcast"))
 
 works %>% 
     format_research_other(my_bib) %>%
@@ -293,6 +318,17 @@ works %>%
     print_data(prefix = "", sep = "\n\n<br />\n\n", 
                empty_message = "None\n")
 ```
+
+## Libguides
+
+* Research Reproducibility and Open Science - https://guides.uflib.ufl.edu/reproducibility  
+2613 views between 2020-05-01 and 2022-11-04
+* Health Outcomes and Biomedical Informatics - https://guides.uflib.ufl.edu/hobi  
+286 views between 2020-05-01 and 2022-11-04
+* CoM Graduate Program in Biomedical Sciences - https://guides.uflib.ufl.edu/BMS  
+17 views between 2020-05-01 and 2022-11-04
+* Biostatistics - https://guides.uflib.ufl.edu/biostats  
+68 views between 2020-05-01 and 2022-11-04
 
 # PATENTS AND COPYRIGHTS
 
@@ -329,6 +365,7 @@ pubs <- filter(dat_research, status %in% c("published", "forthcoming"))
 
 pubs %>%
     format_research("paper", my_bib) %>%
+    remove_IN() %>%
     underline_first_author() %>%
     format_author() %>%
     print_data(prefix = "", sep = "\n\n<br />\n\n", 
@@ -458,21 +495,21 @@ dat %>%
 
 **Planning for Open Grants: Fostering a Transparent and Accessible National Research Proposal Infrastructure** (ongoing)
 
-The funds for this grant supported work on a planning project to explore the social and technical issues around an open repository, including hiring two graduate student research fellows, stipends for an external advisory board, and conference travel. As the PI, I lead the project team, coordinate the activities, and supervise the student hires.
+The funds for this grant support work on a planning project to explore the social and technical issues around an open repository, including hiring two graduate student research fellows, stipends for an external advisory board, and conference travel. As the PI, I lead the project team, coordinate the activities, and supervise the student hires.
 
 **Supplement: GatorSTAR: A New MARC** (ongoing)
 
-The funds for this grant supported salaries and the creation and implementation of training modules to educate students on how to share data following the FAIR (Findable Accessible Interoperable Reusable) guidelines. As an investigator for this project, I helped with creating the materials and assisting with the evaluation of the lesson effetiveness.
+The funds for this grant support salaries for team members and the creation and implementation of training modules to educate students on how to share data following the FAIR (Findable Accessible Interoperable Reusable) guidelines. As an investigator for this project, I co-create the materials and assist with the evaluation of the lesson effectiveness.
 
 **Educating for Reproducibility: Pathways to Integrity**
 
-The funds for this grant supported salaries and the hosting of a virtual conference on education in reproducibility across different research disciplines and career stages. As an investigator for this project, I helped with planning of the conference, and execution during the event itself, including moderating and hosting sessions.
+The funds for this grant supported salaries and the hosting of a virtual conference on education in reproducibility across different research disciplines and career stages. As an investigator for this project, I was a co-planner for the conference, and facilitated the event itself by moderating and hosting sessions.
 
-# 19. SERVICE NARRATIVE 
+# SERVICE NARRATIVE 
 
+<!-- In all of your packet, try to avoid phrases like “helped with” or “assisted with” if it can be described in a stronger way. For example, instead of saying helped with planner, say you were a co-planner. Everything should sound like you are a faculty member doing professional level work. -->
 
-
-
+Carpentries
 
 
 
@@ -695,6 +732,31 @@ print_awards(awards, locale = "local")
 
 # BIO-SKETCHES OF INDIVIDUALS WRITING SOLICITED LETTERS OF EVALUATION and LETTERS OF EVALUATION
 
+<!-- MRT: Although you won’t be asking for letters, this is a great time to think about who you might ask. You could list them here with a short explanation as to why. -->
+
+
 # COPIES OF THE LAST FIVE ANNUAL LETTERS OF EVALUATION
 
-# 34. FURTHER INFORMATION
+# FURTHER INFORMATION
+
+## Submitted Talks
+
+```{r}
+print_talks(dat_talks, locale = NULL, submitted = TRUE)
+```
+
+## Submitted Manuscripts
+
+```{r}
+dat_research <- readRDS("data/research.RDS")
+pubs <- filter(dat_research, status %in% c("in review", "submitted"))
+
+pubs %>%
+    format_research("paper", my_bib) %>%
+    remove_IN() %>%
+    underline_first_author() %>%
+    format_author() %>%
+    print_data(prefix = "", sep = "\n\n<br />\n\n", 
+               empty_message = "None\n")
+```
+

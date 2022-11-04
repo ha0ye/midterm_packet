@@ -1,12 +1,23 @@
-print_talks <- function(talks, locale = "international")
+print_talks <- function(talks, locale = "international", submitted = FALSE)
 {
-    talks <- filter(talks, locale == {{locale}})
+    talks <- replace_na(talks, list(invited = "n", location = ""))
+    if (!is.null(locale))
+    {
+        talks <- filter(talks, locale == {{locale}})
+    }
+    if (!submitted)
+    {
+        talks <- filter(talks, format != "submitted")
+    } else {
+        talks <- filter(talks, format == "submitted")
+    }
+
     if (NROW(talks) == 0)
     {
         cat("None\n")
     }
 
-    if (any(talks$invited == "y"))
+    if (any(talks$invited == "y", na.rm = TRUE))
     {
         cat("### Invited\n\n")
         talks %>%
@@ -15,7 +26,7 @@ print_talks <- function(talks, locale = "international")
             print_data(prefix = "", sep = "\n\n<br />\n\n")
     }
 
-    if (any(talks$invited == "n"))
+    if (any(talks$invited == "n", na.rm = TRUE))
     {
         cat("### Refereed\n")
         talks %>%

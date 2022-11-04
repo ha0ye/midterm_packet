@@ -37,6 +37,12 @@ format_teaching_summary <- function(df)
     header_vals <- gsub("Reqyes/no", "Req\nyes/no", df[1,])
     header_vals <- header_vals[!is.na(header_vals)]
 
+    req_col_id <- which(header_vals == "Req\nyes/no")
+    row_idx <- which(dat_teaching_summary[,1] != "")
+    dat_teaching_summary[row_idx, req_col_id] <- str_replace(dat_teaching_summary[row_idx, req_col_id],
+                                                             "^$",
+                                                             "No")
+
     dat_teaching_summary %>%
         flextable() %>%
         set_table_properties(layout = "autofit") %>%
