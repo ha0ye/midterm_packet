@@ -74,3 +74,31 @@ if (out_of_date("data/talks.RDS"))
     saveRDS(dat_talks, "data/talks.RDS")
 }
 
+if (out_of_date("data/zenodo_stats.RDS"))
+{
+    dat_stats <- get_zenodo_stats()
+
+    if (file.exists("data/research.RDS"))
+    {
+        zenodo_dois <- readRDS("data/research.RDS") %>%
+            filter(str_detect(doi, "zenodo")) %>%
+            mutate(id = gsub("10.5281/zenodo\\.([0-9]+)", "\\1", doi)) %>%
+            select(doi, id)
+
+        zenodo_stats <- dat_stats %>%
+            full_join(zenodo_doi)
+
+        dat_stats <- bind_rows(
+            zenodo_stats %>%
+                filter(!is.na(id), is.na(views)) %>%
+                dplyr::rowwise() %>%
+                dplyr::mutate(data = list(get_zenodo_record(id)),
+                              views = purrr::pluck(data, "stats", "version_views", .default = NA),
+                              downloads = purrr::pluck(data, "stats", "version_downloads", .default = NA)),
+            zenodo_stats %>%
+                filter(is.finite(views))
+        )
+    }
+
+    saveRDS(dat_stats, "data/zenodo_stats.RDS")
+}

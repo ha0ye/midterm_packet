@@ -313,6 +313,7 @@ works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint"
 
 works %>% 
     format_research_other(my_bib) %>%
+    append_zenodo_stats() %>%
     underline_first_author() %>%
     format_author() %>%
     print_data(prefix = "", sep = "\n\n<br />\n\n", 

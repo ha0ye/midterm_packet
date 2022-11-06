@@ -55,3 +55,24 @@ format_awards <- function(df)
         mutate(to_print = glue::glue("{award}, {organization}, {date}")) %>%
         select(date, to_print)
 }
+
+append_zenodo_stats <- function(df,
+                                zenodo_stats_file = "data/zenodo_stats.RDS")
+{
+    if (!file.exists(zenodo_stats_file))
+    {
+        return(df)
+    }
+
+    zenodo_stats <- readRDS("data/zenodo_stats.RDS")
+    df %>%
+        left_join(zenodo_stats, by = "doi") %>%
+        mutate(is_zenodo = is.finite(views) & is.finite(downloads),
+               zenodo_text = ifelse(is_zenodo,
+                                    paste0("(views: ", views,
+                                           "; downloads: ", downloads,
+                                           ")"),
+                                    ""),
+               to_print = glue::glue("{to_print} {zenodo_text}")
+        )
+}
