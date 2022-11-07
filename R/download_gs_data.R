@@ -36,6 +36,12 @@ if (out_of_date("data/research.RDS"))
     saveRDS(dat_research, "data/research.RDS")
 }
 
+if (out_of_date("data/videos.RDS"))
+{
+    dat_videos <- get_gs_data(data_gs_url, sheet = "videos",
+                              report_start_date, report_end_date)
+    saveRDS(dat_videos, "data/videos.RDS")
+}
 
 if (out_of_date("data/grants.RDS"))
 {

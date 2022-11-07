@@ -1,3 +1,18 @@
+underline_first_author <- function(df)
+{
+    format_author(df, c("^(\\w+, \\w+\\.)" = "\\[\\1\\]\\{\\.underline\\}"))
+}
+
+remove_IN <- function(df)
+{
+    format_author(df, c("In: " = ""))
+}
+
+indicate_presenter <- function(df)
+{
+    format_author(df, c("^(\\w+, \\w+\\.)" = "\\1 \\(presenter\\)"))
+}
+
 print_talks <- function(talks, locale = "international", submitted = FALSE)
 {
     talks <- replace_na(talks, list(invited = "n", location = ""))

@@ -1,10 +1,10 @@
 format_jobs <- function(df)
 {
     df %>%
-        dplyr::mutate(date = lubridate::parse_date_time(.data$date_start, "my"),
+        dplyr::mutate(date = lubridate::parse_date_time(date_start, "my"),
                       date_end = tidyr::replace_na(date_end, "present"),
                       Dates = glue::glue("{date_start} - {date_end}")) %>%
-        dplyr::arrange(dplyr::desc(.data$date)) %>%
+        dplyr::arrange(dplyr::desc(date)) %>%
         dplyr::select(Institution, Position, Dates)
 }
 
@@ -25,10 +25,10 @@ format_grants_table <- function(df)
 format_talk <- function(df)
 {
     df %>%
-        dplyr::mutate(author = replace_na(.data$presenters, "H. Ye"),
-                      location = ifelse(.data$location == "Virtual", "(virtual)", .data$location),
+        dplyr::mutate(author = replace_na(presenters, "H. Ye"),
+                      location = ifelse(location == "Virtual", "(virtual)", location),
                       to_print = glue::glue('{author}. {title}, {event_info}, {date}, {location}.\n', .trim = FALSE)) %>%
-        dplyr::select(.data$date, .data$to_print) %>%
+        dplyr::select(date, to_print) %>%
         underline_first_author() %>%
         format_author()
 }
@@ -75,4 +75,18 @@ append_zenodo_stats <- function(df,
                                     ""),
                to_print = glue::glue("{to_print} {zenodo_text}")
         )
+}
+
+format_videos <- function(df)
+{
+    df %>%
+        rowwise() %>%
+        mutate(bib = list(BibEntry(bibtype = "Video",
+                                   title = .data$title,
+                                   author = paste(.data$speaker, "and", .data$hosts),
+                                   date = .data$date,
+                                   url = .data$url,
+                                   key = .data$title)),
+               to_print = purrr::map_chr(.data$bib, format_ref)) %>%
+        select(date, to_print)
 }

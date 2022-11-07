@@ -44,16 +44,6 @@ source("R/format_data.R")
 source("R/format_word_tables.R")
 source("R/print_data.R")
 
-underline_first_author <- function(df)
-{
-    format_author(df, c("^(\\w+, \\w+\\.)" = "\\[\\1\\]\\{\\.underline\\}"))
-}
-
-remove_IN <- function(df)
-{
-    format_author(df, c("In: " = ""))
-}
-
 knitr::opts_chunk$set(echo = FALSE, results = "asis")
 ```
 
@@ -66,6 +56,7 @@ data_files <- c("data/degrees.RDS",
                 "data/grad_committees.RDS",
                 "data/teaching.RDS", 
                 "data/research.RDS",
+                "data/videos.RDS", 
                 "data/grants.RDS", 
                 "data/service.RDS", 
                 "data/reviews.RDS", 
@@ -172,11 +163,31 @@ N/A
 
 # TEACHING, ADVISING, AND INSTRUCTIONAL ACCOMPLISHMENTS
 
+```{r, include = FALSE}
+dat_teaching <- readRDS("data/teaching.RDS")
+```
+
 *NOTE: To support the teaching and research missions of the University, Library faculty are assigned to varying degrees to perform public, technical, archival, and administrative functions. These primary activities are referred to in the Libraries' T&P Criteria as "Professional Responsibilities" rather than "Teaching" to better reflect the unique and specialized activities in which Library faculty engage.*
 
 
 
+```{r, include = FALSE}
+carpentries_instructor_trainings <- filter(dat_teaching, 
+                                           str_detect(title, "Carpentries Instructor Training"))
+```
 
+For example, in summer 2021, I completed trainer training for The Carpentries (The Carpentries is an international non-profit organization that develops and teaches coding and data science skills to researchers), certifying me as an instructor trainer for the organization. My activities for this organization and the local chapter at UF (the UF Carpentries Club) then shifted from serving as an instructor for coding workshops to training and certifying new instructors, to grow the community and sustain excellence in promoting effective computational and data skills. To date, I have taught `r NROW(carpentries_instructor_trainings)` instructor trainings with a total of `r sum(as.numeric(carpentries_instructor_trainings$num_attendees))` new instructors.
+
+
+* **Course-Integrated Instruction** - guest lectures offered as part of for-credit courses at UF (spanning general reproducibility topics and across different colleges and departments)
+* **Standalone Library Workshops** - virtual sessions hosted by the Libraries, and open to all UF students, staff, and faculty
+* **Other Instruction, UF** - other instruction hosted at the UF, usually in the form of workshops with targeted or broad audiences
+* **Other Instruction, Outreach** - other instruction, performed as outreach on behalf of other organizations, and in my areas of expertise
+
+
+I continually seek out opportunities to enhance the impact of my service, including developing and deploying teaching or leadership skills.
+
+My expertise in reproducibility training has been sought out 
 
 
 # TEACHING EVALUATIONS
@@ -202,27 +213,23 @@ format_teaching_eval(df)
 
 **Additional Classes**
 
-```{r, include = FALSE}
-dat_teaching <- readRDS("data/teaching.RDS")
-```
-
-{{explanation}}
+The majority of my instruction occurs in single session or multi-session workshops that receive no evaluations. These activities are divided into the following categories:
 
 ### Course-Integrated Instruction
 
 ```{r}
 dat_teaching %>%
     filter(type == "course-integrated") %>%
-    dplyr::mutate(other_instructor = ifelse(is.na(.data$other_instructor), "", 
+    dplyr::mutate(other_instructor = ifelse(is.na(other_instructor), "", 
                                             glue::glue("co-instructor with {other_instructor}, ")),
                   print_header = glue::glue('**{course_id}: {title}** - *{session}*, {date}, {other_instructor}'),
                   print_instructor = glue::glue("  \nCourse Instructor: {instructor}"),
                   to_print = glue::glue("{print_header}  \n{print_instructor}\n", .trim = FALSE)) %>%
-    dplyr::select(.data$date, .data$to_print) %>%
+    dplyr::select(date, to_print) %>%
     print_data()
 ```
 
-### Stand-Alone Library Workshops
+### Standalone Library Workshops
 
 ```{r}
 dat_teaching %>%
@@ -288,6 +295,11 @@ This includes workshops that I have shared as open educational resources, in add
 
 Work to identify different approaches in training (RR 2020 paper, JMLA paper)
 
+Reproducibility and open research practices are challenging to shift for a number of reasons, including
+too many things to learn
+no "one size fits all" tool or method for everyone
+limited reward or recognition, with the potential for a great deal of time, effort, and other investment.
+
 
 *Reproducibility Practices*
 
@@ -304,19 +316,39 @@ I seek to create more equity and inclusion in academic research spaces. allyship
 
 # CREATIVE WORKS OR ACTIVITIES
 
-<!-- MRT: If you have LibGuides they would go here and would include date of creation, date of update, and number of uses. For your creative works below, would be helpful to have dates and usage if that is possible. -->
+## Open Educational Resources
 
+In keeping with my principles of opening up scholarly and teaching work, I share the contents of my standalone workshops as Open Educational Resources.
+
+<br />
 
 ```{r, results = "asis"}
 dat_research <- readRDS("data/research.RDS")
-works <- filter(dat_research, type %in% c("other", "software", "OER", "preprint", "podcast"))
+works <- filter(dat_research, type %in% c("OER"))
 
 works %>% 
     format_research_other(my_bib) %>%
     append_zenodo_stats() %>%
     underline_first_author() %>%
     format_author() %>%
-    print_data(prefix = "", sep = "\n\n<br />\n\n", 
+    print_data(prefix = "* ", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+## Video recordings for "Rigor and Reproducibility Seminar Series"
+
+This ongoing seminar series is jointly hosted by the UF Normal Fixel Institute for Neurological Diseases and the UF Health Science Center Libraries. Recordings are linked on https://uf-repro.github.io/movementdisorders-seminar/.
+
+<br />
+
+```{r}
+dat_videos <- readRDS("data/videos.RDS")
+
+dat_videos %>% 
+    format_videos() %>%
+    indicate_presenter() %>%
+    format_author() %>%
+    print_data(prefix = "* ", sep = "\n\n", 
                empty_message = "None\n")
 ```
 
@@ -330,6 +362,26 @@ works %>%
 17 views between 2020-05-01 and 2022-11-04
 * Biostatistics - https://guides.uflib.ufl.edu/biostats  
 68 views between 2020-05-01 and 2022-11-04
+
+
+<!-- MRT: If you have LibGuides they would go here and would include date of creation, date of update, and number of uses. For your creative works below, would be helpful to have dates and usage if that is possible. -->
+
+## Other Creative Works
+
+```{r, results = "asis"}
+dat_research <- readRDS("data/research.RDS")
+works <- filter(dat_research, type %in% c("other", "software", "preprint", "podcast"))
+
+works %>% 
+    format_research_other(my_bib) %>%
+    append_zenodo_stats() %>%
+    underline_first_author() %>%
+    format_author() %>%
+    print_data(prefix = "* ", sep = "\n\n", 
+               empty_message = "None\n")
+```
+
+
 
 # PATENTS AND COPYRIGHTS
 
@@ -508,12 +560,26 @@ The funds for this grant supported salaries and the hosting of a virtual confere
 
 # SERVICE NARRATIVE 
 
-<!-- In all of your packet, try to avoid phrases like “helped with” or “assisted with” if it can be described in a stronger way. For example, instead of saying helped with planner, say you were a co-planner. Everything should sound like you are a faculty member doing professional level work. -->
+<!-- As with my research and teaching, the overarching goal of my service work is to improve research practices in the service of reproducibility and openness. Because service work does not often directly affect these qualities, my activities generally take on the form of cultivating resources, communities, and infrastructure to indirectly support the research activities of others. -->
 
-Carpentries
+With my recognized expertise in data science and open science practices, I have been called upon to evaluate funding proposals for several international organizations. As a member of the Event Fund Selection Committee for Code for Science & Society, I and the other committee members evaluated and recommended for funding, a variety of events that build inclusive data science communities. Through 3 rounds of awards, we supported 37 events, representing 27 countries and 6 continents. To sustain continued operations, I provided input on the application and review process, before stepping down in Spring 2022. In 2021, I was an invited grant reviewer for the Wellcome Trust - Data for Science and Health Award, providing evaluation of a research proposal in the area of ecological modeling and data science.
+
+To increase my impact, I organize and cultivate communities to share information and leverage group effort. As the chair of the Medical Library Association Data Caucus (group with over 200 members), I coordinate meetings of librarians who provide data services. As an outgrowth of this group, I created and now facilitate a working group that creates guidance materials for the NIH Data Management and Sharing Policy that goes into effect in January 2023. By working together, this group reduces redundance in effort, and ensures more comprehensive coverage of the policy, So far, this group has created several public resources (https://osf.io/uadxr/). In addition to coordinating this group, I also reached out to professional organizations (RDAP - Research Data Access and Preservation Association, and the Network of the National Library of Medicine National Center for Data Services) to support honoraria for contributors and meeting facilitators. 
+
+In my role as chair of the UF Libraries Open Access Committee, I lead the group in supporting open access publishing at the university. These activities include: creating outreach messaging, promoting of read-and-publish initiatives, and hosting a discussion panel for Open Access Week in October 2022. To bring further transparency to the committee's decision making process, we are preparing to release our evaluation rubric for open access initiatives. This will enable further engagement with the larger community of open access advocates across institutions and research sectors.
+
+I have served on 4 search committees for the UF Libraries (1 ongoing), including one as chair. In addition to ensuring the hiring of excellently qualified personnel, I have acted as the Diversity, Equity, and Inclusion (DEI) search advocate--these additional responsibilities include promoting the position broadly to recruit individuals from diverse backgrounds, suggesting and enacting changes to ensure a fair and equitable process, and making sure that candidates are evaluated on their ability to contribute to the DEI mission of the libraries and the university.
+
+Many of my service activities revolve around promoting an equitable and inclusive environment. In my work with UF student-facing committees (e.g. UF Libraries Student Engagement Committee, UF Libraries Fall Fest Committee, HSCL Diversity, Equity, and Inclusion Team), I strive to design events to be broadly inclusive, especially for online students who are not able to participate in in-person events in Gainesville. As a member of the Reproducibility for Everyone Code of Conduct Committee, I extend this approach to a globally-distributed community. In support of this work, I have received training in Code of Conduct enforcement, and co-developed, with the rest of the committee, detailed procedures for responding to code of conduct incidents, should they arise.
+
+As an associate editor at _Methods for Ecology & Evolution_, I am responsible for handling approximately 6 manuscripts a year: identifying and recruiting peer reviewers, reading the manuscript and its reviews, and making a recommendation to the senior editors. Although I have found this to be more work than performing a peer review, it is also more rewarding. I am able to guide authors in improving their written communications, and to be encouraging to early career authors, including students. In September 2022, I was invited to join the editorial board at _Ecology_ as an editor of the "Data Paper" submission format. In this new position, I am refining the standards to enhance data re-use, while streamlining the process for submitting authors.
+
+<!-- 
+In addition to promoting reproducibility and open research practices through training, I strive to create environments where better practices are normalized and encouraged.  and providing suitable resources that lower the burden to change.
 
 
-
+I continually seek out opportunities to enhance the impact of my service, including developing and deploying teaching or leadership skills. 
+-->
 
 # UNIVERSITY GOVERNANCE AND SERVICE
 
@@ -579,9 +645,9 @@ dat_reviews %>%
 
 None
 
-# 23. INTERNATIONAL ACTIVITIES
+# INTERNATIONAL ACTIVITIES
 
-Reproducibility is a multi-faceted issue that presents a multitude of challenges and possible solutions. In engaging with international collaborators, stakeholders, and audiences, I am able to both share with and learn from a diverse set of backgrounds and experiences that enhance the impact of my work. This is particularly relevant when interacting with reproducibility and open science groups outside the US and thinking about what kinds of multi-institutional or multi-sector partnerships can shift research practices in the US, Florida, the University, and more local settings. Conversely, my service to international communities and professional organizations helps me to stay on the forefront of advances and practices in the areas of research reproducibility and open research.
+Reproducibility is a multi-faceted issue that presents a multitude of challenges and possible solutions. In engaging with international collaborators, stakeholders, and audiences, I am able to both share with and learn from a diverse set of backgrounds and experiences that enhance the impact of my work. This is particularly relevant when interacting with reproducibility and open science groups outside the US and thinking about what kinds of multi-institutional or multi-sector partnerships can shift research practices in the US, Florida, the University, and more local settings. Conversely, my service to international communities and professional organizations enables me to stay on the forefront of advances and practices in the areas of research reproducibility and open research.
 
 # EXTENSION PROGRAMS (for IFAS only)
 
