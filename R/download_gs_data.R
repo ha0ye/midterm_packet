@@ -92,7 +92,7 @@ if (out_of_date("data/zenodo_stats.RDS"))
             select(doi, id)
 
         zenodo_stats <- dat_stats %>%
-            full_join(zenodo_doi)
+            full_join(zenodo_dois)
 
         dat_stats <- bind_rows(
             zenodo_stats %>%
