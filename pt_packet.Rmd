@@ -72,8 +72,6 @@ if (!all(data_files_found))
 }
 ```
 
-**In all of your packet, try to avoid phrases like “helped with” or “assisted with” if it can be described in a stronger way. For example, instead of saying helped with planner, say you were a co-planner. Everything should sound like you are a faculty member doing professional level work.**
-
 # NOMINEE INFORMATION COVER SHEET 
 
 <!--
@@ -88,7 +86,7 @@ The cover sheet automatically gets added after the PDF is uploaded into UF's OPT
 
 <!-- MRT: I split the first sentence into 2 because it was pretty long, and most people won’t be familiar with what you do so important to make it easy for them. I’d be real obvious about how ARCS serves the whole campus, and that ARCS is Smathers Libraries -->
 
-As the reproducibility librarian, I am responsible for developing and executing on an institutional strategy for education and support of trans-disciplinary research reproducibility and open science for the University of Florida community. These responsibilities include programming for and support of information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g. open access, publishing data and code, preprints). I also serve as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences. My position provides interdisciplinary information consultation services in a variety of modes, designs workshops to promote research reproducibility, performs course-integrated instruction, and participates in the Smathers Libraries' teaching initiatives. In addition, I support special projects and programs related to the overall mission of the Academic Research Consulting & Services department, including coordinating and promoting programs and services, such as the Student HiPerGator Sponsorship program. I serve on and lead committees within UF, and for national and international professional organizations, when such responsibilities complement or directly relate to promoting research reproducibility. My scholarship explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives. 
+As the reproducibility librarian, I am responsible for developing and executing on an institutional strategy for education and support of trans-disciplinary research reproducibility and open science for the University of Florida community. These responsibilities include programming for and support of information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g. open access, publishing data and code, preprints). I serve as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences. My position provides interdisciplinary information consultation services in a variety of modes, designs workshops to promote research reproducibility, performs course-integrated instruction, and participates in the Smathers Libraries' teaching initiatives. In addition, I support special projects and programs related to the overall mission of the Academic Research Consulting & Services department, including coordinating and promoting programs and services, such as the Student HiPerGator Sponsorship program. I serve on and lead committees within UF, and for national and international professional organizations, when such responsibilities complement or directly relate to promoting research reproducibility. My scholarship explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives. 
 
 
 ## Impact of COVID pandemic on Job Duties
@@ -99,14 +97,15 @@ As the reproducibility librarian, I am responsible for developing and executing 
 
 The COVID pandemic had a substantial and indeterminate effect on my professional responsibilities. In between my hire and my start in May 2020, the university closed, without a specific plan for re-opening. On top of the challenges of starting a new position, there were many obstacles resulting from operating in unprecedented circumstances. The overall environment and its uncertainties increased the difficulty of planning events, performing in-person outreach, and connecting with both my liaison departments and broader units on campus.
 
-I made use of my existing experience in lesson development and delivering training online to offer workshops online through the Zoom platform. This had the dual advantage of establishing a permanently online record of my lesson content, as well as expanding the accessibility of my instruction to anyone, instead of restricting it to whoever is able to attend in-person.
+I made use of my existing experience in lesson development and delivering training online to offer workshops online through the Zoom platform. This had the dual advantage of establishing a permanently online record of my lesson content, as well as expanding the accessibility of my instruction to anyone, instead of being limited to in-person attendance.
 
+Although the campus re-opened to employees in Summer 2021, there was still a great deal of uncertainty through the Fall 2021 semester, with many classes being offered hybrid and many events remaining virtual. This resulted in delays for certain activities--for my IMLS-funded project, I led my project team to plan in-person meeting, not knowing what future COVID transmission levels or safety measures would be feasible or acceptable to attendees.
 
 # AREAS OF SPECIALIZATION
 
-* **Reproducibility**: promoting research practices that support "reproducibility" (the ability to generate identical or equivalent results to that of an existing publication using the same dataset and analysis procedures), encompassing data management, sharing intermediate products such as data and code, and honest reporting of statistical analyses.
+* **Reproducibility**: promoting research practices that support "reproducibility" (the ability to generate identical or equivalent results to that of an existing publication using the same dataset and analysis procedures), encompassing data management, sharing intermediate products such as data and code, and accurate and rigorous reporting of statistical analyses.
 
-* **Open research**: A philosophy of radical openness and transparency to as many facets of research as possible, recognizing that many research problems are complex and benefit from teams of researchers working collectively and sharing information (e.g. open science commitments for COVID-19 research)
+* **Open research**: A philosophy of radical openness and transparency that may be applied to all facets of research. The open research ethos recognizes that many research problems are complex and thus benefit from teams of researchers working collectively and sharing information (e.g. open access and data sharing commitments for COVID-19 research)
 
 * **Liaison librarianship**: supporting students, staff, and faculty in the health sciences through various activities including: expert literature searching, teaching best practices in information searching and retrieval, developing relevant and appropriate library resources and collections, 
 
@@ -169,25 +168,39 @@ dat_teaching <- readRDS("data/teaching.RDS")
 
 *NOTE: To support the teaching and research missions of the University, Library faculty are assigned to varying degrees to perform public, technical, archival, and administrative functions. These primary activities are referred to in the Libraries' T&P Criteria as "Professional Responsibilities" rather than "Teaching" to better reflect the unique and specialized activities in which Library faculty engage.*
 
-
-
 ```{r, include = FALSE}
 carpentries_instructor_trainings <- filter(dat_teaching, 
                                            str_detect(title, "Carpentries Instructor Training"))
+
+standalone_stats <- filter(dat_teaching, 
+                           type == "standalone")
+standalone_sessions <- NROW(standalone_stats)
+standalone_attendees <- sum(as.numeric(standalone_stats$num_attendees))
 ```
 
-For example, in summer 2021, I completed trainer training for The Carpentries (The Carpentries is an international non-profit organization that develops and teaches coding and data science skills to researchers), certifying me as an instructor trainer for the organization. My activities for this organization and the local chapter at UF (the UF Carpentries Club) then shifted from serving as an instructor for coding workshops to training and certifying new instructors, to grow the community and sustain excellence in promoting effective computational and data skills. To date, I have taught `r NROW(carpentries_instructor_trainings)` instructor trainings with a total of `r sum(as.numeric(carpentries_instructor_trainings$num_attendees))` new instructors.
+As the reproducibility librarian, I strive to promote better research practices that both improve reproducibility and make research more effective and efficient. One of the pillars of my work is to provide training and instruction in a variety of formats and settings.
+
+In the for-credit course I co-teach with colleagues in HSCL and ARCS, "GMS 5909: Finding Biomedical Research Information and Communicating Science", I work to embed reproducibility as a core element in the research process. Although this course primarily reaches graduate students in the Health Science Colleges, I am able to expand my reach to more varied research disciplines and contexts through course-integrated instruction. For example, I regularly teach a session in "GMS 7877: Responsible Conduct of Biomedial Research", as well as in the Research Integrity Summer Seminar Series offered by the UF Office of Research. These courses are often used to satisfy training requirements in research integrity, reflecting the growing awareness of reproducibility as a cornerstone of effective research practices. In addition, I have led guest lectures for courses in diverse departments across UF, such as Genomics, Biomedical Engineering, Latin American Studies, and Entomology & Nemotology.
+
+There are still many audiences not reached through these forms of instruction, as well as additional topics in reproducibility. Because research can take on so many forms, so too are there different aspects of reproducibility, and so there is no "one size fits all" tool or method that works for everyone. Consequently, I offer a number of standalone workshops through the UF Libraries on a diverse array of topics (a total of `r standalone_sessions` sessions with a total of `r standalone_attendees` attendees). To make these workshops actionable, they all feature practical skills that can be implemented immediately, as well as follow-up resources for further training and practice. I share these instructional materials as individual websites linked through https://guides.uflib.ufl.edu/reproducibility/lessons, to provide researchers with asynchronous access.
+
+Improving research practices is a large-scale problem. Instead of trying to teach researchers directly, one of the ways I can have a larger impact is through developing the teaching skill of others. Thus, in summer 2021, I sought out and completed trainer training for The Carpentries, an international non-profit organization that develops and teaches coding and data science skills to researchers. As a certified instructor trainer, I can train new instructors, sustaining both The Carpentries global organization, as well as the local chapter at UF (the UF Carpentries Club). To date, I have taught `r NROW(carpentries_instructor_trainings)` instructor trainings with a total of `r sum(as.numeric(carpentries_instructor_trainings$num_attendees))` new instructors.
+
+co-organize the Rigor and Reproducibility Seminar Series for the 
+T32
+Invite international experts to present on topics in research integrity, reproducibility, and open science. 
+We initially had speakers every month, but soon transitioned to a once per semester. 
+Well-received with attendance from outside UF, and including funders at NIH.
 
 
 * **Course-Integrated Instruction** - guest lectures offered as part of for-credit courses at UF (spanning general reproducibility topics and across different colleges and departments)
 * **Standalone Library Workshops** - virtual sessions hosted by the Libraries, and open to all UF students, staff, and faculty
 * **Other Instruction, UF** - other instruction hosted at the UF, usually in the form of workshops with targeted or broad audiences
-* **Other Instruction, Outreach** - other instruction, performed as outreach on behalf of other organizations, and in my areas of expertise
 
+Coincident with growing 
 
-I continually seek out opportunities to enhance the impact of my service, including developing and deploying teaching or leadership skills.
+I am especially proud that my expertise in reproducibility training has been sought out by a growing number of organizations outside of UF, including the National Institutes of Health Office of Data Science Strategy and the Afrian Society for Bioinformatics and Computational Biology, where I have been an invited guest instructorfor tutorials in their codeathon events.
 
-My expertise in reproducibility training has been sought out 
 
 
 # TEACHING EVALUATIONS
@@ -301,6 +314,11 @@ no "one size fits all" tool or method for everyone
 limited reward or recognition, with the potential for a great deal of time, effort, and other investment.
 
 
+have shared as open educational resources, in addition to trainings developed in conjunction with others.
+
+Work to identify different approaches in training (RR 2020 paper, JMLA paper)
+
+
 *Reproducibility Practices*
 
 documents reproducibility, organize our understanding of different facets, and promote approaches that enable researchers to identify pathways for improving reproducibility that work best for their current set of practices and for their research approach and discipline. For example, using git/github or a version control system is often touted as an important tool for reproduciblity; however it is challenging to learn, with few immediate benefits, and not well-suited for non-computational research workflows.
@@ -312,6 +330,7 @@ documents reproducibility, organize our understanding of different facets, and p
 open research can shift power
 I seek to create more equity and inclusion in academic research spaces. allyship skills and advocacy for systemic changes to better recognize and reward individuals in research support roles (e.g. research computing, libraries, research software engineering)
 
+growing interest in NINDS led to participating in NIH workshop on catalyzing research rigor champions 
 
 
 # CREATIVE WORKS OR ACTIVITIES
