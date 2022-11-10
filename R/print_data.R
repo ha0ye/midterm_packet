@@ -13,9 +13,8 @@ indicate_presenter <- function(df)
     format_author(df, c("^(\\w+, \\w+\\.)" = "\\1 \\(presenter\\)"))
 }
 
-print_talks <- function(talks, locale = "international", submitted = FALSE)
+print_talks <- function(talks, locale = "international", submitted = FALSE, refereed_label = "refereed")
 {
-    talks <- replace_na(talks, list(invited = "n", location = ""))
     if (!is.null(locale))
     {
         talks <- filter(talks, locale == {{locale}})
@@ -43,7 +42,7 @@ print_talks <- function(talks, locale = "international", submitted = FALSE)
 
     if (any(talks$invited == "n", na.rm = TRUE))
     {
-        cat("### Refereed\n")
+        cat("### ", refereed_label, "\n", sep = "")
         talks %>%
             filter(invited == "n") %>%
             format_talk() %>%

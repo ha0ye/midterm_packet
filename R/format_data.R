@@ -25,9 +25,9 @@ format_grants_table <- function(df)
 format_talk <- function(df)
 {
     df %>%
-        dplyr::mutate(author = replace_na(presenters, "H. Ye"),
+        dplyr::mutate(author = replace_na(presenters, "Ye, H."),
                       location = ifelse(location == "Virtual", "(virtual)", location),
-                      to_print = glue::glue('{author}. {title}, {event_info}, {date}, {location}.\n', .trim = FALSE)) %>%
+                      to_print = glue::glue('{author} _{title}_, {event_info}, {date}, {location}.\n', .trim = FALSE)) %>%
         dplyr::select(date, to_print) %>%
         underline_first_author() %>%
         format_author()
@@ -56,24 +56,29 @@ format_awards <- function(df)
         select(date, to_print)
 }
 
-append_zenodo_stats <- function(df,
+join_zenodo_stats <- function(df,
                                 zenodo_stats_file = "data/zenodo_stats.RDS")
 {
     if (!file.exists(zenodo_stats_file))
     {
+        warning("Did not find zenodo stats file - ", zenodo_stats_file)
         return(df)
     }
 
     zenodo_stats <- readRDS("data/zenodo_stats.RDS")
     df %>%
-        left_join(zenodo_stats, by = "doi") %>%
+        left_join(zenodo_stats, by = "doi")
+}
+
+format_zenodo_stats <- function(df)
+{
+    df %>%
         mutate(is_zenodo = is.finite(views) & is.finite(downloads),
                zenodo_text = ifelse(is_zenodo,
                                     paste0("(views: ", views,
                                            "; downloads: ", downloads,
                                            ")"),
-                                    ""),
-               to_print = glue::glue("{to_print} {zenodo_text}")
+                                    "")
         )
 }
 
@@ -89,4 +94,66 @@ format_videos <- function(df)
                                    key = .data$title)),
                to_print = purrr::map_chr(.data$bib, format_ref)) %>%
         select(date, to_print)
+}
+
+format_outreach <- function(df)
+{
+    df %>%
+        mutate(instructor = replace_na(instructor, "Hao Ye"),
+               other_instructor = str_replace_all(other_instructor, ", ", " and "),
+               title = ifelse(is.na(session), title, glue::glue("{title}: {session}")),
+               author = ifelse(is.na(other_instructor),
+                               instructor,
+                               paste(instructor, "and", other_instructor))) %>%
+        rowwise() %>%
+        mutate(bib = list(BibEntry(bibtype = "Misc",
+                                   title = .data$title,
+                                   author = .data$author,
+                                   location = paste0(.data$event_info, ", ", .data$date),
+                                   date = NA,
+                                   key = .data$title)),
+               to_print = purrr::map_chr(.data$bib, format_ref)) %>%
+        format_author()
+}
+
+combine_talks_and_outreach <- function(talks, outreach, locale = "international",
+                         refereed_label = "refereed")
+{
+    talks <- filter(talks, format != "submitted", locale == {{locale}})
+    outreach <- filter(outreach, locale == {{locale}})
+
+    if (NROW(talks) + NROW(outreach) == 0)
+    {
+        cat("None\n")
+    }
+
+    if (any(talks$invited == "y", na.rm = TRUE) ||
+        any(outreach$invited == "y", na.rm = TRUE))
+    {
+        cat("### Invited\n\n")
+        bind_rows(
+            talks %>%
+                filter(invited == "y") %>%
+                format_talk(),
+            outreach %>%
+                filter(invited == "y") %>%
+                format_outreach()
+        ) %>%
+            print_data(prefix = "", sep = "\n\n<br />\n\n")
+    }
+
+    if (any(talks$invited != "y", na.rm = TRUE) ||
+        any(outreach$invited != "y", na.rm = TRUE))
+    {
+        cat("### ", refereed_label, "\n", sep = "")
+        bind_rows(
+            talks %>%
+                filter(invited == "n") %>%
+                format_talk(),
+            outreach %>%
+                filter(invited == "n") %>%
+                format_outreach()
+        ) %>%
+            print_data(prefix = "", sep = "\n\n<br />\n\n")
+    }
 }
