@@ -14,8 +14,8 @@ format_grants_table <- function(df)
         dplyr::mutate(Role = glue::glue("{role} ({percentage}%)"),
                       `Reporting Agency` = funder,
                       `Grant Title` = title,
-                      Dates = glue::glue('{strftime(date_start, format = "%m/%y")} - {strftime(date_end, format = "%m/%y")} '),
-                      `Awarded/Anticipated` = total_award,
+                      Dates = glue::glue('{strftime(date_start, format = "%b/%y")} - {strftime(date_end, format = "%b/%y")} '),
+                      `Awarded/Anticipated` = glue::glue('{total_award}\n{total_award}'),
                       `Candidate Allocation` = allocation) %>%
         dplyr::select(Role, `Reporting Agency`,
                       `Grant Title`, Dates,
@@ -117,7 +117,7 @@ format_outreach <- function(df)
 }
 
 combine_talks_and_outreach <- function(talks, outreach, locale = "international",
-                         refereed_label = "refereed")
+                         refereed_label = "Refereed")
 {
     talks <- filter(talks, format != "submitted", locale == {{locale}})
     outreach <- filter(outreach, locale == {{locale}})

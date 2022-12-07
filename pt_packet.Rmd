@@ -29,8 +29,6 @@ BibOptions(check.entries = FALSE,
            use.misc.default.format = TRUE)
 my_bib <- ReadBib(data_bib_file, check = FALSE)
 
-dept_name <- "Academic Research Consulting & Services"
-
 set_flextable_defaults(
     font.family = "Times New Roman", 
     font.size = 11, 
@@ -53,6 +51,7 @@ data_files <- c("data/degrees.RDS",
                 "data/effort_perc.RDS", 
                 "data/teaching_summary.RDS", 
                 "data/teaching_evals.RDS", 
+                "data/course_info.RDS", 
                 "data/grad_committees.RDS",
                 "data/teaching.RDS", 
                 "data/research.RDS",
@@ -88,7 +87,7 @@ The cover sheet automatically gets added after the PDF is uploaded into UF's OPT
 
 <!-- As the reproducibility librarian, I am responsible for developing and executing on an institutional strategy for education and support of trans-disciplinary research reproducibility and open science for the University of Florida community. These responsibilities include programming for and support of information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g., open access, publishing data and code, preprints). I serve as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences. My position provides interdisciplinary information consultation services in a variety of modes, designs workshops to promote research reproducibility, performs course-integrated instruction, and participates in the Smathers Libraries' teaching initiatives. In addition, I support special projects and programs related to the overall mission of the Academic Research Consulting & Services department, including coordinating and promoting programs and services, such as the Student HiPerGator Sponsorship program. I serve on and lead committees within UF, and for national and international professional organizations, when such responsibilities complement or directly relate to promoting research reproducibility. My scholarship explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives. -->
 
-The reproducibility librarian is responsible for developing and executing on a strategy for trans-disciplinary research reproducibility and open science for the University of Florida community. These topics span a variety of research practices, including information retrieval/storage, data- and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g., open access, publishing data and code, preprints). This position also serves as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences.
+The reproducibility librarian is responsible for developing and executing a strategy for trans-disciplinary research reproducibility and open science for the University of Florida community. These topics span a variety of research practices, including information retrieval/storage, data and computational workflows, responsible conduct of research, and open scholarship broadly defined (e.g., open access, publishing data and code, preprints). This position also serves as the liaison librarian to several departments and programs in the College of Medicine and College of Public Health and Health Professions: Biostatistics, Health Outcomes and Biomedical Informatics, and the Graduate Program in Biomedical Sciences.
 Activities of the reproducibility librarian include information consultation services in a variety of modes, the design and teaching of workshops in research reproducibility, course-integrated instruction, and participation in broader teaching initiatives in the Smathers Libraries.
 The position additionally supports special projects and programs related to the overall mission of the Academic Research Consulting & Services (ARCS) department, including the Student HiPerGator Sponsorship program, Artificial Intelligence, and Research Integrity.
 The reproducibility librarian is expected to engage in impactful and innovative scholarship. My research specifically explores new modes and models for open research broadly and possible interventions to shift existing practices, such as through instruction, technical infrastructure, and sociocultural incentives.
@@ -100,11 +99,11 @@ As faculty of a leading public university, the reproducibility librarian engages
 <!-- MRT: I’d probably add something here about how long the libraries were closed to in-person. -->
 
 
-The COVID pandemic had a substantial and indeterminate effect on my professional responsibilities. In between my hire and my start in May 2020, the university closed, without a specific plan for re-opening. On top of the challenges of starting a new position, there were many obstacles resulting from operating in unprecedented circumstances. The overall environment and its uncertainties increased the difficulty of planning events, performing in-person outreach, and connecting with both my liaison departments and broader units on campus.
+The COVID pandemic had a substantial and indeterminate effect on my professional responsibilities. In between my hire and my start in May 2020, the university campus closed. On top of the challenges of starting a new position, there were many obstacles resulting from operating in unprecedented circumstances. The overall environment and its uncertainties increased the difficulty of planning events, performing in-person outreach, and connecting with both my liaison departments and broader units on campus.
 
-I made use of my existing experience in lesson development and delivering training online to offer workshops online through the Zoom platform. This had the dual advantage of establishing a permanently online record of my lesson content, as well as expanding the accessibility of my instruction to anyone, instead of being limited to in-person attendance.
+I made use of my existing experience in lesson development and delivering training online to offer workshops online through the Zoom platform. This had the dual advantage of establishing a permanent, online record of my lesson content, as well as expanding the accessibility of my instruction to anyone, instead of being limited to in-person attendance.
 
-Although the campus re-opened to employees in Summer 2021, there was still a great deal of uncertainty through the Fall 2021 semester, with many classes being offered hybrid and many events remaining virtual. This resulted in delays for certain activities--for my IMLS-funded project, I led my project team to plan in-person meeting, not knowing what future COVID transmission levels or safety measures would be feasible or acceptable to attendees.
+Although the campus re-opened to employees in Summer 2021, there was still a great deal of uncertainty through the Fall 2021 semester, with many classes being offered hybrid and many events remaining virtual. This resulted in delays for certain activities--for my IMLS-funded project (see Section 13 for more details), I led my project team to plan in-person meeting, not knowing what future COVID transmission levels or safety measures would be feasible or acceptable to attendees.
 
 # AREAS OF SPECIALIZATION
 
@@ -116,7 +115,7 @@ Although the campus re-opened to employees in Summer 2021, there was still a gre
 
 * **Diversity, equity, and inclusion**: cultivating environments and systems that are intentionally welcoming of individuals from all backgrounds, including historically and presently oppressed group identities, such as race, nationality, gender, sexuality, disability status, etc. 
 
-# EFFORT REPORTED SINCE LAST PROMOTION (NOT TO EXCEED TEN YEARS), OR SINCE UF EMPLOYMENT, whichever is more recent 
+# EFFORT REPORTED SINCE UF EMPLOYMENT
 
 ```{r}
 df <- readRDS("data/effort_perc.RDS")
@@ -129,8 +128,10 @@ if (length(last_row) == 1)
     df <- df[seq(from = 1, to = last_row), ]
 }
 
-format_effort_perc(df)
+format_effort_perc(df, dept_name = "Academic Research Consulting & Services")
 ```
+
+<br />
 
 # EDUCATIONAL BACKGROUND
 
@@ -146,6 +147,8 @@ dat_degrees %>%
     align(align = "center", part = "header")
 ```
 
+<br />
+
 # EMPLOYMENT
 
 ```{r, message = FALSE}
@@ -158,6 +161,7 @@ dat_jobs %>%
     align(align = "center", part = "header")
 ```
 
+<br />
 
 # YEAR TENURE/PERMANENT STATUS WAS AWARDED BY UNIVERSITY OF FLORIDA
 
@@ -206,23 +210,22 @@ Briefly, a study is **reproducible** if an independent researcher can perform an
 Both reproducibility and replicability relate to the reliability of research results, and are thus important for early career researchers to adopt.
 
 My instructional reach spans the UF community.
-I co-teach a for-credit course with colleagues in HSCL and ARCS, "GMS 5909: Finding Biomedical Research Information and Communicating Science", introducing reproducibility as an essential facet of the research process. While this graduate-level course was originally created for students in the health science, it has attracted students from throughout campus.
-I reach multiple research disciplines through guest lectures and course-integrated instruction--invited instruction for classes where I am not the instructor of record, with associated course assignments.
-For example, I regularly lead a session in "GMS 7877: Responsible Conduct of Biomedical Research", disucssing reproducibility and its relationship with research integrity.
+I co-teach a for-credit course with colleagues in HSCL and ARCS, "GMS 5909: Finding Biomedical Research Information and Communicating Science", introducing reproducibility as an essential facet of the research process. While this graduate-level course was originally created for students in the health sciences, it has attracted students from throughout campus.
+I reach multiple research disciplines through guest lectures and course-integrated instruction---invited instruction for classes where I am not the instructor of record, with associated course assignments.
+For example, I regularly lead a session in "GMS 7877: Responsible Conduct of Biomedical Research", discussing reproducibility and its relationship with research integrity.
 I provide guest lectures for courses in diverse departments and programs across UF, such as Biomedical Engineering, Latin American Studies, Entomology & Nemotology, the UF Office of Research's Research Integrity Summer Seminar Series, and a Course-Based Undergraduate Research Experience in Genomics.
 This broad influence reflects the growing awareness of the importance of reproducibility, and my ability to provide effective instruction to different disciplines.
 
-However, there are limitations to these forms of instruction.
-Because research is so varied, and there is no "one size fits all" tool or method.
+However, because research is so varied, there are limitations to these forms of instruction. 
 Consequently, I have developed and teach an array of standalone workshops that are not related to any specific class, program, or unit, but are available to the entire university community.
 To make these workshops relevant and engaging, I feature practical skills that can be implemented immediately, along with follow-up resources for further training and practice.
-To maximize reach, I offer these workshops virtually through zoom, provide recordings to registered attendees, and share the instructional materials as individual websites linked through https://guides.uflib.ufl.edu/reproducibility/lessons.
+To maximize reach, I offer these workshops virtually through Zoom, provide recordings to registered attendees, and share the instructional materials online.
 Nevertheless, learners still find benefits to attending "live", as seen in my total count of `r standalone_attendees` attendees across `r standalone_sessions` sessions.
 To expand the impact of my educational content to students and researchers beyond the University of Florida, I publish and disseminate my materials as open educational resources on the Zenodo repository; collectively these have `r sum(oer_works$views)` views and `r sum(oer_works$downloads)` downloads.
 
 My ability to provide effective instruction is recognized beyond UF, and has been sought out by organizations such as the NIH Office of Data Science Strategy and the African Society for Bioinformatics and Computational Biology.
 For both organizations, I have been an invited instructor in codeathon events, where groups of participants work closely together on a project over 2-5 days.
-I teach kills and techniques to help the teams in their project; these tutorials are positively received, with measured uptake of new practices during the events and invitations to return for future events.
+I teach skills and techniques to help the teams in their project; these tutorials are positively received, with measured uptake of new practices during the events and invitations to return for future events.
 
 In addition to teaching directly, I enhance my instructional impact by developing other teachers.
 In summer 2021, I completed trainer training for The Carpentries, an international non-profit organization that develops and teaches practical and reproducible coding and data science skills to researchers.
@@ -255,7 +258,8 @@ format_teaching_summary(df)
 
 ```{r}
 df <- readRDS("data/teaching_evals.RDS")
-format_teaching_eval(df)
+course_info <- readRDS("data/course_info.RDS")
+format_teaching_eval(df, course_info)
 ```
 
 **Additional Classes**
@@ -343,23 +347,23 @@ This event brought together leading researchers and institutional representative
 *Open Science^[Although "open science" is the most common term, many aspects apply to research fields that are not considered part of science. I use "open science" here to refer broadly to "open research" or "open scholarship".] Practices*
 
 One of the common pathways to improve reproducibility is to increase openness and transparency in research.
-This includes actions that are already established, such as sharing publications open access, as well as emergent, such as sharing data, analysis code, and pre-registered study protocols.
-Some of my work explores these boundaries, in order to provide better guidance to researchers, as well as shape research practice more broadly.
+This includes actions that are already established, such as sharing publications via open access, as well as emergent, such as sharing data, analysis code, and pre-registered study protocols.
+Some of my work explores these boundaries, to provide better guidance to researchers, as well as shape research practice more broadly.
 
 To explore the challenges and solutions in bringing openness and transparency to grant proposals, I am the PI on the project "Planning for Open Grants: Fostering a Transparent and Accessible National Research Proposal Infrastructure", funded by the Institute for Museum and Library Services.
-This project engages with stakeholders across research sectors, including researchers, administrators, funders, and technologists, and will complete in 2023.
+This project engages with stakeholders across research sectors, including researchers, administrators, funders, and technologists.
 Outputs from the project include conference talks (1 completed, and 1 proposed) and publications (1 accepted for full submission to the _College & Research Libraries_ topical issue on "Open and Equitable Scholarly Communications"). 
 
-With growing interest in open science, high-level organizations have created or plan to create implementation guidelines
+With growing interest in open science, high-level organizations have created or plan to create implementation guidelines. 
 In response to the 2022 call from UNESCO for feedback on the "UNESCO Recommendation on Open Science", I co-authored a commentary to provide input on several key areas, "Open Life Science (OLS) response to UNESCO global call for best practices in open science".
-This collaboration brought together our lived experience and expertise in open science education and open science communities to (hopefully) inform policy at the highest levels.
+This collaboration brought together our lived experience and expertise in open science education and open science communities to inform policy at the highest levels.
 
 *Equity and Inclusion*
 
 Open research is commonly considered to include aspects such as bringing research to the public, through open access and citizen science projects that invite the public to participate in research.
 This perspective can also be brought to bear on academic research systems and their practices in equity and inclusion.
 My work in this area includes advocating for more equality in job recognition of contributions to research.
-For example, I co-led a paper on the need for better career support for research support specialists, but who are not typically acknowledge as researchers, "A manifesto for rewarding and recognising Team Infrastructure Roles", submitted to the _Journal of Trial and Error_.
+For example, I co-led a paper on the need for better career support for research support specialists, who are not typically acknowledged as researchers, "A manifesto for rewarding and recognising Team Infrastructure Roles", submitted to the _Journal of Trial and Error_.
 
 I also seek to cultivate environments that are more inclusive and welcoming.
 With my expertise in allyship skills and providing instruction in allyship skills, I co-authored a paper that provides an introduction to these skills and practices, "An Introduction to Ally Skills for Natural History Collections Professionals".
@@ -541,7 +545,7 @@ combine_talks_and_outreach(dat_talks, outreach_instruction, locale = "local")
 
 ```{r, include = FALSE}
 start_year <- year(report_start_date)
-end_year <- year(report_end_date)
+end_year <- min(year(report_end_date), year(Sys.Date()))
 ```
 
 ## Funded
@@ -585,7 +589,7 @@ if (NROW(grants) > 0)
 ### Summary of Grant Funding
 
 ```{r}
-dat <- data.frame(ROLE = c("Principal Investigator", "Co-Principal Investigator", "Investigator", "Senior Personnel", "Sponsor of Junior Faculty", "Totals"), 
+dat <- tibble(ROLE = c("Principal Investigator", "Co-Principal Investigator", "Investigator", "Senior Personnel", "Sponsor of Junior Faculty", "Totals"), 
                   TOTAL = c(99833, 0, 8697, 0, 0, 108530), 
                   `Direct Costs` = c(75289, 0, 6675, 0, 0, 81964), 
                   `Indirect Costs` = c(24544, 0, 2022, 0, 0, 26566))
@@ -607,11 +611,11 @@ The funds for this grant support work on a planning project to explore the socia
 
 **Supplement: GatorSTAR: A New MARC** (ongoing)
 
-The funds for this grant support salaries for team members and the creation and implementation of training modules to educate students on how to share data following the FAIR (Findable Accessible Interoperable Reusable) guidelines. As an investigator for this project, I co-create the materials and assist with the evaluation of the lesson effectiveness.
+The funds for this grant support salaries for team members and the creation and implementation of training modules to educate students on how to share data following the FAIR (Findable Accessible Interoperable Reusable) guidelines. As a Co-Investigator for this project, I co-create the materials and assist with the evaluation of the lesson effectiveness.
 
 **Educating for Reproducibility: Pathways to Integrity**
 
-The funds for this grant supported salaries and the hosting of a virtual conference on education in reproducibility across different research disciplines and career stages. As an investigator for this project, I was a co-planner for the conference, and facilitated the event itself by moderating and hosting sessions.
+The funds for this grant supported salaries and the hosting of a virtual conference on education in reproducibility across different research disciplines and career stages. As a Co-Investigator for this project, I was a co-planner for the conference, and facilitated the event itself by moderating and hosting sessions.
 
 # SERVICE NARRATIVE 
 
@@ -619,12 +623,12 @@ The funds for this grant supported salaries and the hosting of a virtual confere
 
 With my recognized expertise in data science and open science, I have been invited to evaluate funding proposals for several international organizations.
 In 2020, I began serving on the Event Fund Selection Committee for _Code for Science & Society_, a nonprofit organization that works to "advance the power of data to improve the social and economic lives of all people through public education, scientific research, and technology development and deployment".
-I and the other committee members evaluated and recommended for funding, events that build inclusive data science communities. Through 3 rounds of awards, we supported 37 events, representing 27 countries and 6 continents.
+With the other committee members, I evaluated and recommended for funding, events that build inclusive data science communities. Through 3 rounds of awards, we supported 37 events, representing 27 countries and 6 continents.
 <!--Before stepping down in Spring 2022, I provided input on the application and review process.-->
 In 2021, I was an invited grant reviewer for the Wellcome Trust - Data for Science and Health Award, providing evaluation of a research proposal in the area of ecological modeling and data science.
 
 Some of my most impactful work is in organizing communities to work together.
-The Data Caucus of the Medical Library Association consists of over 200 data librarians; as the elected chair of this group, I create capacity for collaborations and resource-sharing.
+As the elected chair of the Medical Library Association's Data Caucus, a group comprising over 200 data librarians, I create capacity for collaborations and resource-sharing.
 Out of this community, I established an ongoing working group that creates guidance materials for the new NIH Data Management and Sharing Policy.
 This new policy goes into effect in January 2023 and mandates Data Management and Sharing Plans to accompany all funding proposals, to maximize data sharing and re-use.
 By leveraging collective effort, the working group reduces redundancy among those of us who support researchers with data services, and also helps to ensure more comprehensive guidance.
@@ -643,7 +647,7 @@ This will promote engagement with the broader community of open access advocates
 
 Many of my service activities revolve around promoting an equitable and inclusive environment.
 I serve as a member of the Code of Conduct Committee for _Reproducibility for Everyone_, a global community that shares instructional modules and teaches workshops on reproducibility.
-In support of this work, I have received training in Code of Conduct enforcement, and co-developed, with the rest of the committee, detailed procedures for documeting and responding to code of conduct incidents, should they arise.
+In support of this work, I have received training in Code of Conduct enforcement, and co-developed, with the rest of the committee, detailed procedures for documenting and responding to code of conduct incidents, should they arise.
 I apply my DEI experiences and training at the University of Florida through the design of inclusive events for student-facing committees (e.g., UF Libraries Student Engagement Committee, UF Libraries Fall Fest Committee, HSCL Diversity, Equity, and Inclusion Team).
 In particular, I strive to make sure events are broadly accessible, such as for online students who are not able to participate in in-person events in Gainesville.
 

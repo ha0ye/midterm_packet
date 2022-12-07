@@ -16,10 +16,22 @@ if (out_of_date("data/degrees.RDS"))
     saveRDS(dat_degrees, "data/degrees.RDS")
 }
 
+if (out_of_date("data/effort_perc.RDS"))
+{
+    dat_effort <- get_gs_data(data_gs_url, sheet = "effort")
+    saveRDS(dat_effort, "data/effort_perc.RDS")
+}
+
 if (out_of_date("data/jobs.RDS"))
 {
     dat_jobs <- get_gs_data(data_gs_url, sheet = "jobs")
     saveRDS(dat_jobs, "data/jobs.RDS")
+}
+
+if (out_of_date("data/course_info.RDS"))
+{
+    course_info <- get_gs_data(data_gs_url, sheet = "course_info")
+    saveRDS(course_info, "data/course_info.RDS")
 }
 
 if (out_of_date("data/teaching.RDS"))

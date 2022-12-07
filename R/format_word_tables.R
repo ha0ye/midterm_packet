@@ -1,6 +1,7 @@
-format_effort_perc <- function(df)
+format_effort_perc <- function(df, dept_name = "Department")
 {
-    dat_effort <- df
+    dat_effort <- rbind(colnames(df),
+                        df)
     m <- NROW(dat_effort)
     n <- NCOL(dat_effort)
     colnames(dat_effort) <- seq(n)
@@ -60,12 +61,23 @@ format_teaching_summary <- function(df)
         fontsize(size = 10, part = "header")
 }
 
-format_teaching_eval <- function(df)
+format_teaching_eval <- function(df, course_info)
 {
     dat_teaching_evals <- df[c(-1, -2, -3),]
     m <- NROW(dat_teaching_evals)
     n <- NCOL(dat_teaching_evals)
     colnames(dat_teaching_evals) <- df[3,]
+
+    # find matching course info and replace details in `df`
+    this_course <- str_match(df[1,1], "Term:\\s+([0-9]{4} [A-Za-z]+),\\s+Course:\\s+([A-Z]+[0-9]+)")
+    stopifnot(NROW(this_course) == 1)
+    match <- course_info %>%
+        filter(term == this_course[1,2],
+               course == this_course[1,3])
+    df[2,1] <- str_replace_all(df[2,1],
+                    c("Required Course: " = paste0("Required Course: ", match$required),
+                      "Team Taught %: " = paste0("Team Taught %: ", match$team_perc),
+                      "Mode of Delivery:" = paste0("Mode of Delivery: ", match$mode)))
 
     dat_teaching_evals %>%
         flextable() %>%
