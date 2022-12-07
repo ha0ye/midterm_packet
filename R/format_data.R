@@ -67,7 +67,7 @@ join_zenodo_stats <- function(df,
 
     zenodo_stats <- readRDS("data/zenodo_stats.RDS")
     df %>%
-        left_join(zenodo_stats, by = "doi")
+        left_join(zenodo_stats, by = "doi", suffix = c("", ".z"))
 }
 
 format_zenodo_stats <- function(df)
@@ -156,4 +156,20 @@ combine_talks_and_outreach <- function(talks, outreach, locale = "international"
         ) %>%
             print_data(prefix = "", sep = "\n\n<br />\n\n")
     }
+}
+
+join_bib_data <- function(df, my_bib)
+{
+    df %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(bib = case_when(
+            is.na(bib_id) ~ list(BibEntry(bibtype = "Misc",
+                                          title = .data$title,
+                                          author = str_replace_all(.data$authors, ", ", " and "),
+                                          doi = .data$doi,
+                                          date = .data$date,
+                                          key = .data$title,
+            )),
+            TRUE ~ list(my_bib[bib_id])),
+            to_print = format_ref(bib))
 }

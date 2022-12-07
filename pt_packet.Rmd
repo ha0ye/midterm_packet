@@ -42,7 +42,7 @@ source("R/format_data.R")
 source("R/format_word_tables.R")
 source("R/print_data.R")
 
-knitr::opts_chunk$set(echo = FALSE, results = "asis")
+knitr::opts_chunk$set(echo = FALSE, results = "asis", message = FALSE)
 ```
 
 ```{r check data sources}
@@ -427,7 +427,8 @@ works <- filter(dat_research, type %in% c("other", "software", "preprint", "podc
 
 works %>% 
     format_zenodo_stats() %>%
-    format_research_other(my_bib, zenodo_text) %>%
+    join_bib_data(my_bib) %>%
+#    format_research_other(my_bib, zenodo_text) %>%
     mutate(to_print = glue::glue("{to_print} {zenodo_text}")) %>% 
     underline_first_author() %>%
     format_author() %>%
