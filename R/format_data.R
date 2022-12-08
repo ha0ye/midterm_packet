@@ -185,3 +185,14 @@ label_coinstructor <- function(df,
         TRUE ~ to_print)
     )
  }
+
+format_oer_works <- function(df)
+{
+    df %>%
+        dplyr::mutate(
+            to_print = glue::glue("_{title}_, Version {version}. ({year(as.Date(date))}). DOI: {doi}. {zenodo_text}")
+        )
+        # dplyr::mutate(to_print = purrr::map_chr(.data$bib_id, ~ format_ref(my_bib[.x])),
+        #               to_print = glue("{to_print}\n", .trim = FALSE)) %>%
+        # dplyr::select(.data$date, .data$to_print, ...)
+}

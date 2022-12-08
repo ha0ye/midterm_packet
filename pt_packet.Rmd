@@ -370,15 +370,10 @@ With my expertise in allyship skills and providing instruction in allyship skill
 
 In keeping with my principles of opening up scholarly and teaching work, I share the contents of my standalone workshops as Open Educational Resources.
 
-<br />
-
 ```{r, results = "asis"}
 oer_works %>% 
     format_zenodo_stats() %>%
-    format_research_other(my_bib, zenodo_text) %>% 
-    mutate(to_print = glue::glue("{to_print} {zenodo_text}")) %>% 
-    underline_first_author() %>%
-    format_author() %>%
+    format_oer_works() %>% 
     print_data(prefix = "* ", sep = "\n\n", 
                empty_message = "None\n")
 ```
