@@ -883,7 +883,7 @@ print_awards(awards, locale = "local")
 ## Submitted Talks
 
 ```{r}
-print_talks(dat_talks, locale = NULL, submitted = TRUE, refereed_label = "In Review")
+print_talks(dat_talks, locale = NULL, submitted = TRUE, refereed_label = NULL)
 ```
 
 ## Submitted Manuscripts

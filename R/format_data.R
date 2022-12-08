@@ -120,7 +120,9 @@ format_outreach <- function(df)
 combine_talks_and_outreach <- function(talks, outreach, locale = "international",
                          refereed_label = "Refereed")
 {
-    talks <- filter(talks, format != "submitted", locale == {{locale}})
+    talks <- filter(talks,
+                    !str_detect(format, "submitted"),
+                    locale == {{locale}})
     outreach <- filter(outreach, locale == {{locale}})
 
     if (NROW(talks) + NROW(outreach) == 0)
@@ -196,3 +198,9 @@ format_oer_works <- function(df)
         #               to_print = glue("{to_print}\n", .trim = FALSE)) %>%
         # dplyr::select(.data$date, .data$to_print, ...)
 }
+
+label_first_author <- function(df)
+{
+    format_author(df, c("^(\\w+, \\w+\\.)" = "\\1 [presenter]"))
+}
+

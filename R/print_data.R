@@ -19,11 +19,11 @@ print_talks <- function(talks, locale = "international", submitted = FALSE, refe
     {
         talks <- filter(talks, locale == {{locale}})
     }
-    if (!submitted)
+    if (submitted)
     {
-        talks <- filter(talks, format != "submitted")
+        talks <- filter(talks, str_detect(format, "submitted"))
     } else {
-        talks <- filter(talks, format == "submitted")
+        talks <- filter(talks, !str_detect(format, "submitted"))
     }
 
     if (NROW(talks) == 0)
@@ -42,7 +42,10 @@ print_talks <- function(talks, locale = "international", submitted = FALSE, refe
 
     if (any(talks$invited == "n", na.rm = TRUE))
     {
-        cat("### ", refereed_label, "\n", sep = "")
+        if (!is.null(refereed_label))
+        {
+            cat("### ", refereed_label, "\n", sep = "")
+        }
         talks %>%
             filter(invited == "n") %>%
             format_talk() %>%
