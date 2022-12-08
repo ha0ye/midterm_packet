@@ -265,15 +265,31 @@ The majority of my instruction occurs in single session or multi-session worksho
 ### Course-Integrated Instruction
 
 ```{r}
-dat_teaching %>%
+to_format <- dat_teaching %>%
     filter(type == "course-integrated") %>%
-    dplyr::mutate(other_instructor = ifelse(is.na(other_instructor), "", 
-                                            glue::glue("co-instructor with {other_instructor}, ")),
-                  print_header = glue::glue('**{course_id}: {title}** - *{session}*, {date}, {other_instructor}'),
+    mutate(other_instructor = ifelse(is.na(other_instructor), "", 
+                                     glue::glue("co-instructor with {other_instructor}, ")), 
+           unique_id = paste(course_id, title, session, instructor)) %>%
+    group_by(unique_id) %>%
+    summarize(
+        course_id = first(course_id), 
+        title = first(title), 
+        session = first(session), 
+        n = n(), 
+        date = paste0(date, collapse = ", "), 
+        other_instructor = first(other_instructor), 
+        instructor = first(instructor)
+    ) %>%
+    mutate(date = case_when(n > 1 ~ paste0(n, " sessions: ", date), 
+                              TRUE ~ date)
+    )
+
+to_format %>%
+    dplyr::mutate(print_header = glue::glue('**{course_id}: {title}** - *{session}*, {date}, {other_instructor}'),
                   print_instructor = glue::glue("  \nCourse Instructor: {instructor}"),
                   to_print = glue::glue("{print_header}  \n{print_instructor}\n", .trim = FALSE)) %>%
-    dplyr::select(date, to_print) %>%
     print_data()
+
 ```
 
 ### Standalone Library Workshops

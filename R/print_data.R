@@ -58,7 +58,7 @@ print_service <- function(service, sublocale = "university")
     service %>%
         filter(sublocale == {{sublocale}}) %>%
         mutate(date_end = replace_na(date_end, "present")) %>%
-        format_service() %>%
+        format_service(group = TRUE) %>%
         print_data(prefix = "* ", sep = "\n\n")
 }
 
@@ -67,7 +67,7 @@ print_memberships <- function(memberships, locale = "international")
     memberships %>%
         filter(locale == {{locale}}) %>%
         mutate(date_end = replace_na(date_end, "present")) %>%
-        format_service() %>%
+        format_service(group = TRUE) %>%
         print_data(prefix = "* ", sep = "\n\n",
                    empty_message = "None\n")
 }
