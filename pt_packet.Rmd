@@ -380,20 +380,15 @@ oer_works %>%
 
 ## Video recordings for "Rigor and Reproducibility Seminar Series"
 
-This ongoing seminar series is jointly hosted by the UF Norman Fixel Institute for Neurological Diseases and the UF Health Science Center Libraries. Recordings are linked on https://uf-repro.github.io/movementdisorders-seminar/.
-
-<br />
-
 ```{r}
 dat_videos <- readRDS("data/videos.RDS")
-
-dat_videos %>% 
-    format_videos() %>%
-    indicate_presenter() %>%
-    format_author() %>%
-    print_data(prefix = "* ", sep = "\n\n", 
-               empty_message = "None\n")
+video_summary <- dat_videos %>%
+    summarize(first_date = min(date), 
+              last_date = max(date), 
+              count = n())
 ```
+
+This ongoing seminar series is jointly hosted by the UF Norman Fixel Institute for Neurological Diseases and the UF Health Science Center Libraries. Since the first seminar on `r strftime(video_summary$first_date, "%B %d, %Y")`, I have organized and moderated a total of `r video_summary$count` seminars. Recordings of all the seminars are linked on https://uf-repro.github.io/movementdisorders-seminar/. 
 
 ## Libguides
 
