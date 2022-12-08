@@ -29,7 +29,6 @@ format_talk <- function(df)
                       location = ifelse(location == "Virtual", "(virtual)", location),
                       to_print = glue::glue('{author} _{title}_, {event_info}, {date}, {location}.\n', .trim = FALSE)) %>%
         dplyr::select(date, to_print) %>%
-        underline_first_author() %>%
         format_author()
 }
 
@@ -104,7 +103,8 @@ format_outreach <- function(df)
                title = ifelse(is.na(session), title, glue::glue("{title}: {session}")),
                author = ifelse(is.na(other_instructor),
                                instructor,
-                               paste(instructor, "and", other_instructor))) %>%
+                               paste0(instructor, " and ", other_instructor)),
+               multiauthor = !is.na(other_instructor)) %>%
         rowwise() %>%
         mutate(bib = list(BibEntry(bibtype = "Misc",
                                    title = .data$title,
@@ -113,6 +113,7 @@ format_outreach <- function(df)
                                    date = NA,
                                    key = .data$title)),
                to_print = purrr::map_chr(.data$bib, format_ref)) %>%
+        label_coinstructor() %>%
         format_author()
 }
 
@@ -173,3 +174,14 @@ join_bib_data <- function(df, my_bib)
             TRUE ~ list(my_bib[bib_id])),
             to_print = format_ref(bib))
 }
+
+label_coinstructor <- function(df,
+                               replacement = c("^([A-Za-z\\-]+, [A-Za-z\\-]+\\.)" = "\\1 [co-instructor]",
+                                               "(, |and )([A-Za-z\\-]+\\. [A-Za-z\\-]+)" = "\\1\\2 [co-instructor]"))
+{
+    dplyr::mutate(df, to_print = case_when(
+        multiauthor ~ stringr::str_replace_all(.data$to_print,
+                                               {{replacement}}),
+        TRUE ~ to_print)
+    )
+ }
